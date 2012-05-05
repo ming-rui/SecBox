@@ -1,0 +1,5 @@
+http://code.google.com/p/gitextensions/downloads/list
+https://github.com/spdr870/gitextensions
+http://help.github.com/win-set-up-git/
+GPG£®GNU Privacy Guard£©∑«∂‘≥∆º”√‹
+CURL
