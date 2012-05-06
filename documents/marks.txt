@@ -3,3 +3,9 @@ https://github.com/spdr870/gitextensions
 http://help.github.com/win-set-up-git/
 GPG（GNU Privacy Guard）非对称加密
 CURL
+文件路径名加密后转码作为文件名
+空目录？
+google-toolbox-for-mac
+base64:rfc4648
+AES128
+密码需要处理一下？
