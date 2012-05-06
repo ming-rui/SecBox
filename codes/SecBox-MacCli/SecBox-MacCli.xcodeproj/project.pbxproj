@@ -1,0 +1,261 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4C23112015566656001C131A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C23111F15566656001C131A /* Foundation.framework */; };
+		4C23112315566656001C131A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C23112215566656001C131A /* main.m */; };
+		4C23112715566656001C131A /* SecBox_MacCli.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C23112615566656001C131A /* SecBox_MacCli.1 */; };
+		4C43ECA21556B4D00051BACF /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C43ECA11556B4D00051BACF /* GTMStringEncoding.m */; };
+		4C6A1900155678B800C6E914 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6A18FF155678B800C6E914 /* Security.framework */; };
+		4C6A1915155682BA00C6E914 /* SBoxAlgorithms.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4C23111915566656001C131A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				4C23112715566656001C131A /* SecBox_MacCli.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4C23111B15566656001C131A /* SecBox-MacCli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SecBox-MacCli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C23111F15566656001C131A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4C23112215566656001C131A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4C23112515566656001C131A /* SecBox-MacCli-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SecBox-MacCli-Prefix.pch"; sourceTree = "<group>"; };
+		4C23112615566656001C131A /* SecBox_MacCli.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SecBox_MacCli.1; sourceTree = "<group>"; };
+		4C43EC9F1556B4D00051BACF /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
+		4C43ECA01556B4D00051BACF /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
+		4C43ECA11556B4D00051BACF /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
+		4C6A18FF155678B800C6E914 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		4C6A1913155682BA00C6E914 /* SBoxAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxAlgorithms.h; sourceTree = "<group>"; };
+		4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxAlgorithms.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4C23111815566656001C131A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C6A1900155678B800C6E914 /* Security.framework in Frameworks */,
+				4C23112015566656001C131A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4C23111015566656001C131A = {
+			isa = PBXGroup;
+			children = (
+				4C23112115566656001C131A /* SecBox-MacCli */,
+				4C23111E15566656001C131A /* Frameworks */,
+				4C23111C15566656001C131A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4C23111C15566656001C131A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4C23111B15566656001C131A /* SecBox-MacCli */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4C23111E15566656001C131A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4C6A18FF155678B800C6E914 /* Security.framework */,
+				4C23111F15566656001C131A /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4C23112115566656001C131A /* SecBox-MacCli */ = {
+			isa = PBXGroup;
+			children = (
+				4C43EC9E1556B4D00051BACF /* gtm */,
+				4C23112215566656001C131A /* main.m */,
+				4C23112615566656001C131A /* SecBox_MacCli.1 */,
+				4C23112415566656001C131A /* Supporting Files */,
+				4C6A1913155682BA00C6E914 /* SBoxAlgorithms.h */,
+				4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */,
+			);
+			path = "SecBox-MacCli";
+			sourceTree = "<group>";
+		};
+		4C23112415566656001C131A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4C23112515566656001C131A /* SecBox-MacCli-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4C43EC9E1556B4D00051BACF /* gtm */ = {
+			isa = PBXGroup;
+			children = (
+				4C43EC9F1556B4D00051BACF /* GTMDefines.h */,
+				4C43ECA01556B4D00051BACF /* GTMStringEncoding.h */,
+				4C43ECA11556B4D00051BACF /* GTMStringEncoding.m */,
+			);
+			path = gtm;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4C23111A15566656001C131A /* SecBox-MacCli */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C23112A15566656001C131A /* Build configuration list for PBXNativeTarget "SecBox-MacCli" */;
+			buildPhases = (
+				4C23111715566656001C131A /* Sources */,
+				4C23111815566656001C131A /* Frameworks */,
+				4C23111915566656001C131A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SecBox-MacCli";
+			productName = "SecBox-MacCli";
+			productReference = 4C23111B15566656001C131A /* SecBox-MacCli */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4C23111215566656001C131A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 4C23111515566656001C131A /* Build configuration list for PBXProject "SecBox-MacCli" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4C23111015566656001C131A;
+			productRefGroup = 4C23111C15566656001C131A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4C23111A15566656001C131A /* SecBox-MacCli */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C23111715566656001C131A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C23112315566656001C131A /* main.m in Sources */,
+				4C6A1915155682BA00C6E914 /* SBoxAlgorithms.m in Sources */,
+				4C43ECA21556B4D00051BACF /* GTMStringEncoding.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4C23112815566656001C131A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4C23112915566656001C131A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4C23112B15566656001C131A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SecBox-MacCli/SecBox-MacCli-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4C23112C15566656001C131A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SecBox-MacCli/SecBox-MacCli-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C23111515566656001C131A /* Build configuration list for PBXProject "SecBox-MacCli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C23112815566656001C131A /* Debug */,
+				4C23112915566656001C131A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C23112A15566656001C131A /* Build configuration list for PBXNativeTarget "SecBox-MacCli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C23112B15566656001C131A /* Debug */,
+				4C23112C15566656001C131A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4C23111215566656001C131A /* Project object */;
+}
