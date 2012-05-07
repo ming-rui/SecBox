@@ -5,6 +5,7 @@
 @protocol SBoxNetConnectionDelegate;
 
 @interface SBoxNetConnection : NSObject<NSURLConnectionDelegate> {
+	@private
 	NSString *_urlString;
 	id<SBoxNetConnectionDelegate> _delegate;
 	NSURLConnection *_connectionPtr;

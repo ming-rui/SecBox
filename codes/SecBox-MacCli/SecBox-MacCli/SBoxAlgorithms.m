@@ -14,7 +14,7 @@
 @implementation SBoxAlgorithms
 
 
-+ (NSData *) AES128EncryptWithData:(NSData*)data key:(NSString *)key {
++ (NSData *) AES256EncryptWithData:(NSData*)data key:(NSString *)key {
 	if([data length]==0||[key length]==0)
 		return nil;
 	
@@ -27,7 +27,7 @@
 	
     CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
                                           kCCOptionPKCS7Padding | kCCOptionECBMode,
-                                          keyPtr, kCCBlockSizeAES128,
+                                          keyPtr, kCCKeySizeAES256,
                                           NULL,
                                           [data bytes], [data length],
                                           buffer, bufferSize,
@@ -41,7 +41,7 @@
 	return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
 }
 
-+ (NSData *) AES128DecryptWithData:(NSData*)data Key:(NSString *)key {
++ (NSData *) AES256DecryptWithData:(NSData*)data Key:(NSString *)key {
 	if([data length]==0||[key length]==0)
 		return nil;
 	
@@ -54,7 +54,7 @@
 	
     CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
                                           kCCOptionPKCS7Padding | kCCOptionECBMode,
-                                          keyPtr, kCCBlockSizeAES128,
+                                          keyPtr, kCCKeySizeAES256,
                                           NULL,
                                           [data bytes], [data length],
                                           buffer, bufferSize,

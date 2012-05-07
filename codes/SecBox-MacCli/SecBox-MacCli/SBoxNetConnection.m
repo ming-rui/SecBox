@@ -1,7 +1,7 @@
 
 #import "SBoxNetConnection.h"
 
-#import "SBoxIncludes.h"
+#import "SBoxDefines.h"
 
 #define kDefaultDataSize	256
 
@@ -10,18 +10,18 @@
 //@synthesize receivedResponse=_response;
 @synthesize urlString=_urlString;
 
-- (void) delayedConnectionFailedWhileIniting{
+- (void) delayedConnectionFailedWhileIniting {
 	[_delegate connectionFailed:self];
 	
 	[self release];		//self release
 }
 
-- (id) initWithURLString:(NSString*)urlString delegate:(id<SBoxNetConnectionDelegate>)delegate{
+- (id) initWithURLString:(NSString*)urlString delegate:(id<SBoxNetConnectionDelegate>)delegate {
 	if(self=[super init]){
 		DLog(@"[NetConnection] initWithURLString:%@",urlString);
 		_delegate = delegate;
 		if(urlString==nil){
-			DAssert(NO,@"assert failed! init NetConnection with nil urlString");
+			DAssert(NO,@"");
 			[self performSelector:@selector(delayedConnectionFailedWhileIniting) withObject:nil afterDelay:0.0];
 			return self;
 		}
@@ -45,11 +45,40 @@
 	return [self retain];	//self retain
 }
 
-+ (id) connectionWithURLString:(NSString *)urlString delegate:(id<SBoxNetConnectionDelegate>)delegate{
+- (id) initWithRequest:(NSMutableURLRequest*)request delegate:(id<SBoxNetConnectionDelegate>)delegate {
+	if(self=[super init]){
+		DLog(@"[NetConnection] initWithRequest:%@",request);
+		_delegate = delegate;
+		if(request==nil){
+			DAssert(NO,@"");
+			[self performSelector:@selector(delayedConnectionFailedWhileIniting) withObject:nil afterDelay:0.0];
+			return self;
+		}
+		_dataSize = kDefaultDataSize;
+		[request setValue:@"close" forHTTPHeaderField:@"Connection"];
+		_connectionPtr = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+		[_connectionPtr scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+		[_connectionPtr start];
+		[_connectionPtr release];
+		if(_connectionPtr==nil){
+			DLog(@"[NetConnection] connection==nil");
+			[self performSelector:@selector(delayedConnectionFailedWhileIniting) withObject:nil afterDelay:0.0];
+			return self;
+		}
+	}
+	
+	return [self retain];	//self retain
+}
+
++ (id) connectionWithURLString:(NSString *)urlString delegate:(id<SBoxNetConnectionDelegate>)delegate {
 	return [[[self alloc] initWithURLString:urlString delegate:delegate] autorelease];
 }
 
-- (void) dealloc{
++ (id) connectionWithRequest:(NSURLRequest*)request delegate:(id<SBoxNetConnectionDelegate>)delegate {
+	return [[[self alloc] initWithRequest:request delegate:delegate] autorelease];
+}
+
+- (void) dealloc {
 	[_urlString release];
 	[_data release];
 	[_response release];
@@ -57,7 +86,7 @@
 	[super dealloc];
 }
 
-- (void) cancel{
+- (void) cancel {
 	DLog(@"[NetConnection] cancel");
 	if(_connectionPtr==nil)
 		return;
@@ -69,7 +98,7 @@
 	[self release];		//self release
 }
 
-- (NSData*) receivedData{
+- (NSData*) receivedData {
 	if(!_dataReady)
 		return nil;
 	return _data;
@@ -77,7 +106,7 @@
 
 #pragma mark NSURLConnectionDelegate
 
-- (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response{
+- (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	DLog(@"[NetConnection] connectionDidReceiveResponse:%@",response);
 	//DAssert(_response==nil,@"response!=nil");
 	_response = [response retain];
@@ -90,7 +119,7 @@
 	}
 }
 
-- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{
+- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	//DLog(@"[NetConnection] connection:didReceiveData:");
 	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
 	if(_data==nil){
@@ -105,11 +134,11 @@
 	if([_delegate respondsToSelector:@selector(connection:receivedOfPercentage:)]){
 		long long length = [_response expectedContentLength];
 		if(length!=NSURLResponseUnknownLength)
-			[_delegate connection:self receivedOfPercentage:(float)[_buffer length]/(unsigned)length];
+			[_delegate connection:self receivedOfPercentage:(float)[_data length]/(unsigned)length];
 	}
 }
 
-- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
+- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	DLog(@"[NetConnection] connection:didFailWithError:%@",error);
 	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
 	_connectionPtr = nil;
@@ -118,7 +147,7 @@
 	[self release];
 }
 
-- (void) connectionDidFinishLoading:(NSURLConnection *)connection{
+- (void) connectionDidFinishLoading:(NSURLConnection *)connection {
 	DLog(@"[NetConnection] connectionDidFinishLoading:");
 	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
 	if(_data==nil){

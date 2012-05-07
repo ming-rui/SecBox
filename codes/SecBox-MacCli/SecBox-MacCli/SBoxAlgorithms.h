@@ -10,8 +10,8 @@
 
 @interface SBoxAlgorithms
 
-+ (NSData *) AES128EncryptWithData:(NSData*)data key:(NSString *)key;
-+ (NSData *) AES128DecryptWithData:(NSData*)data Key:(NSString *)key;
++ (NSData *) AES256EncryptWithData:(NSData*)data key:(NSString *)key;
++ (NSData *) AES256DecryptWithData:(NSData*)data Key:(NSString *)key;
 
 + (NSString *) base64wsEncodeWithData:(NSData *)data;
 + (NSData *) base64wsDecodeWithString:(NSString *)string;
