@@ -10,14 +10,82 @@
 
 @implementation SBoxConfigs
 
+@synthesize accountType = _accountType;
+@synthesize accountUserName = _accountUserName;
+@synthesize accountPassword = _accountPassword;
+@synthesize currentRemotePath = _currentRemotePath;
+
+@synthesize encryptionUserName = _encryptionUserName;
+@synthesize encryptionPassword = _encryptionPassword;
+
+#pragma mark -
+#pragma mark Class Methods
+
+#define kSBoxConfigsKey			@"SBoxConfigs"
+
+static SBoxConfigs *_configs = nil;
+
 + (SBoxConfigs *) sharedConfigs {
-	static SBoxConfigs *_configs = nil;
 	@synchronized(self) {
+		if(_configs==nil){
+			NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:kSBoxConfigsKey];
+			if(data!=nil&&[data isKindOfClass:[NSData class]]){
+				_configs = [[NSKeyedUnarchiver unarchiveObjectWithData:data] retain];
+				if(![_configs isKindOfClass:self]){
+					[_configs release];
+					_configs = nil;
+				}
+			}
+		}
 		if(_configs==nil)
 			_configs = [[self alloc] init];
 	}
 	
 	return _configs;
+}
+
++ (void) save {
+	if(_configs==nil)
+		return;
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_configs];
+	[[NSUserDefaults standardUserDefaults] setObject:data forKey:kSBoxConfigsKey];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+#pragma mark -
+#pragma mark NSCoding
+
+#define kAccountTypeKey			@"accType"
+#define kAccountUserNameKey		@"accUserName"
+#define kAccountPasswordKey		@"accPass"
+#define kCurrentRemotePathKey	@"currRemotePath"
+#define kEncryptionUserNameKey	@"encUserName"
+#define kEncryptionPasswordKey	@"encPass"
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if(self){
+        _accountType = [coder decodeIntForKey:kAccountTypeKey];
+		_accountUserName = [[coder decodeObjectForKey:kAccountUserNameKey] retain];
+		_accountPassword = [[coder decodeObjectForKey:kAccountPasswordKey] retain];
+		_currentRemotePath = [[coder decodeObjectForKey:kCurrentRemotePathKey] retain];
+		
+		_encryptionUserName = [[coder decodeObjectForKey:kEncryptionUserNameKey] retain];
+		_encryptionPassword = [[coder decodeObjectForKey:kEncryptionPasswordKey] retain];
+    }
+	
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+	[coder encodeInt:_accountType forKey:kAccountTypeKey];
+	[coder encodeObject:_accountUserName forKey:kAccountUserNameKey];
+	[coder encodeObject:_accountPassword forKey:kAccountPasswordKey];
+	[coder encodeObject:_currentRemotePath forKey:kCurrentRemotePathKey];
+	
+	[coder encodeObject:_encryptionUserName forKey:kEncryptionUserNameKey];
+	[coder encodeObject:_encryptionPassword forKey:kEncryptionPasswordKey];
 }
 
 @end

@@ -8,49 +8,67 @@
 
 #import <Foundation/Foundation.h>
 
-#include "stdio.h"
+#import "SBoxDefines.h"
 #import "SecBox.h"
 #import "SBoxAlgorithms.h"
+#import "SBoxConfigs.h"
 
 
-SBoxReturnType SBoxShowStatus() {
-	printf("show status\n");
+SBoxRet SBoxShowStatus() {
+	DLog("show status");
+	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
+	printf("\nStatus:\n"
+		   "\t Account Type: %s, User Name: %s\n"
+		   "\t Encryption User Name: %s\n"
+		   "\n",
+		   SBoxAccountTypeString([configs accountType]),
+		   [[configs accountUserName] cStringUsingEncoding:NSUTF8StringEncoding],
+		   [[configs encryptionUserName] cStringUsingEncoding:NSUTF8StringEncoding]
+		   );
 	
 	return SBoxSuccess;
 };
 
-SBoxReturnType SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, const char *password) {
-	printf("set account info\n");
+SBoxRet SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, const char *password) {
+	DLog("set account info");
+	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
+	[configs setAccountType:accountType];
+	[configs setAccountUserName:[NSString stringWithCString:userName encoding:NSUTF8StringEncoding]];
+	[configs setAccountPassword:[NSString stringWithCString:password encoding:NSUTF8StringEncoding]];
+	
 	
 	return SBoxSuccess;
 }
 
-SBoxReturnType SBoxSetEncryptionInfo(const char *userName, const char *password) {
-	printf("set encryption info\n");
+SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password) {
+	DLog("set encryption info");
+	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
+	[configs setEncryptionUserName:[NSString stringWithCString:userName encoding:NSUTF8StringEncoding]];
+	[configs setEncryptionPassword:[NSString stringWithCString:password encoding:NSUTF8StringEncoding]];
 	
 	return SBoxSuccess;
 }
 
-SBoxReturnType SBoxListRemoteDirectory() {
-	printf("list remote directory\n");
+SBoxRet SBoxListRemoteDirectory() {
+	DLog("list remote directory");
 	
 	return SBoxSuccess;
 }
 
-SBoxReturnType SBoxChangeRemoteDirectory(const char *path) {
-	printf("change remote directory\n");
+SBoxRet SBoxChangeRemoteDirectory(const char *path) {
+	DLog("change remote directory");
 	
 	return SBoxSuccess;
 }
 
-SBoxReturnType SBoxPutFile(const char *localSubPath, const char *remoteSubPath) {
-	printf("put file from {%s} to {%s}\n", localSubPath, remoteSubPath);
+SBoxRet SBoxPutFile(const char *localSubPath, const char *remoteSubPath) {
+	DLog("put file from {%s} to {%s}", localSubPath, remoteSubPath);
 	
 	return SBoxSuccess;
 }
 
-SBoxReturnType SBoxGetFile(const char *remoteSubPath, const char *localSubPath) {
-	printf("get file from {%s} to {%s}\n", remoteSubPath, localSubPath);
+SBoxRet SBoxGetFile(const char *remoteSubPath, const char *localSubPath) {
+	DLog("get file from {%s} to {%s}", remoteSubPath, localSubPath);
 	
 	return SBoxSuccess;
 }
@@ -69,8 +87,12 @@ int main(int argc, const char * argv[]) {
 //		
 //	    NSLog(@"hello:%@",s);
 		
+		
 		SBoxCLIMain(argc, argv);
 	    
+		//SBoxShowStatus();//test
+		
+		[SBoxConfigs save];
 	}
 	
     return 0;

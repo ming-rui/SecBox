@@ -1,50 +1,56 @@
 
 
-#define kSBoxExecutableName		"secbox"
-#define kSBoxEncryptionKeySize	32	//AES256
+#define kSBoxExecutableName			"secbox"
+#define kSBoxEncryptionKeySize		32	//AES256
+
+#define kAccountTypeStringWeibo		"weibo"
+#define kAccountTypeStringWeipan	"weipan"
 
 typedef enum {
 	SBoxAccountTypeWeibo	=	0,
 	SBoxAccountTypeWeipan	=	1,
 }SBoxAccountType;
+#define SBoxAccountTypeString(type)	((type)?kAccountTypeStringWeipan:kAccountTypeStringWeibo)
+
 
 typedef enum {
 	SBoxSuccess = 0,
 	SBoxFail = -1,
-}SBoxReturnType;
+}SBoxRet;
 
 
-SBoxReturnType SBoxCLIMain(int argc, const char *argv[]);
+SBoxRet SBoxCLIMain(int argc, const char *argv[]);
 
 
 #pragma mark infomation
 
-SBoxReturnType SBoxShowHelp();
-SBoxReturnType SBoxShowStatus();
+SBoxRet SBoxShowHelp();
+SBoxRet SBoxShowStatus();
 
 
 #pragma mark account&encryption
 
-SBoxReturnType SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, const char *password);
-SBoxReturnType SBoxSetEncryptionInfo(const char *userName, const char *password);
+SBoxRet SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, const char *password);
+SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password);
 
 
 #pragma mark individual file operations
 
-SBoxReturnType SBoxListRemoteDirectory();
-SBoxReturnType SBoxChangeRemoteDirectory(const char *path);
+SBoxRet SBoxListRemoteDirectory();
+SBoxRet SBoxChangeRemoteDirectory(const char *path);
 
-SBoxReturnType SBoxPutFile(const char *localSubPath, const char *remoteSubPath);
-SBoxReturnType SBoxGetFile(const char *remoteSubPath, const char *localSubPath);
+SBoxRet SBoxPutFile(const char *localSubPath, const char *remoteSubPath);
+SBoxRet SBoxGetFile(const char *remoteSubPath, const char *localSubPath);
+//SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath);
 
 
 #pragma mark synchronization
 
-SBoxReturnType SBoxSetLocalRoot(const char *path);
-SBoxReturnType SBoxSetRemoteRoot(const char *path);
-
-SBoxReturnType SBoxPush();
-SBoxReturnType SBoxPull();
+//SBoxRet SBoxSetLocalRoot(const char *path);
+//SBoxRet SBoxSetRemoteRoot(const char *path);
+//
+//SBoxRet SBoxPush();
+//SBoxRet SBoxPull();
 
 
 

@@ -15,8 +15,7 @@
 #define kCmdCStringGetFile					"get"
 
 
-#define kAccountTypeStringWeibo				"weibo"
-#define kAccountTypeStringWeipan			"weipan"
+#pragma mark input suppliemnts
 
 char* getString(char *string, int size, char secret, char *prompt) {
 	char *retv = NULL;
@@ -30,7 +29,7 @@ char* getString(char *string, int size, char secret, char *prompt) {
 		if(retv!=NULL){
 			for(int i=0; string[i]!='\0'; i++){
 				if(string[i]=='\r'||string[i]=='\n'){
-					string[i]=0;
+					string[i]='\0';
 					break;
 				}
 			}
@@ -39,13 +38,16 @@ char* getString(char *string, int size, char secret, char *prompt) {
 	return retv;
 }
 
-SBoxReturnType invalidInput() {
+SBoxRet invalidInput() {
 	printf("invalid input!\n");
 	
 	return SBoxFail;
 }
 
-SBoxReturnType inputAccountType(SBoxAccountType *accountType) {
+
+#pragma mark input account info
+
+SBoxRet inputAccountType(SBoxAccountType *accountType) {
 	char inputString[10];
 	char *prompt = "Set Account Type(" kAccountTypeStringWeibo " or " kAccountTypeStringWeipan "):";
 	char *retv = getString(inputString, sizeof(inputString), 0, prompt);
@@ -64,7 +66,7 @@ SBoxReturnType inputAccountType(SBoxAccountType *accountType) {
 	return SBoxSuccess;
 }
 
-SBoxReturnType inputAccountUserName(char *userName, int size) {
+SBoxRet inputAccountUserName(char *userName, int size) {
 	char *retv = getString(userName, size, 0, "Set Account User Name:");
 	
 	if(retv==NULL)
@@ -76,7 +78,7 @@ SBoxReturnType inputAccountUserName(char *userName, int size) {
 	return SBoxSuccess;
 }
 
-SBoxReturnType inputAccountPassword(char *password, int size) {
+SBoxRet inputAccountPassword(char *password, int size) {
 	char *retv = getString(password, size, 1, "Set Account Password:");
 	
 	if(retv==NULL)
@@ -88,7 +90,26 @@ SBoxReturnType inputAccountPassword(char *password, int size) {
 	return SBoxSuccess;
 }
 
-SBoxReturnType inputEncryptionUserName(char *userName, int size) {
+SBoxRet inputAccountInfo() {
+	char userName[40];
+	char password[40];
+	SBoxAccountType accountType;
+	
+	if(inputAccountType(&accountType)!=SBoxSuccess)
+		return SBoxFail;
+	if(inputAccountUserName(userName, sizeof(userName))!=SBoxSuccess)
+		return SBoxFail;
+	if(inputAccountPassword(password, sizeof(password))!=SBoxSuccess)
+		return SBoxFail;
+	SBoxRet retv = SBoxSetAccountInfo(accountType, userName, password);
+	
+	return retv;
+}
+
+
+#pragma mark input encryption info
+
+SBoxRet inputEncryptionUserName(char *userName, int size) {
 	char *retv = getString(userName, size, 0, "Set Encryption User Name:");
 	
 	if(retv==NULL)
@@ -100,7 +121,7 @@ SBoxReturnType inputEncryptionUserName(char *userName, int size) {
 	return SBoxSuccess;
 }
 
-SBoxReturnType inputEncryptionPassword(char *password, int size) {
+SBoxRet inputEncryptionPassword(char *password, int size) {
 	char *retv = getString(password, size, 1, "Set Encryption Password:");
 	
 	if(retv==NULL)
@@ -112,14 +133,23 @@ SBoxReturnType inputEncryptionPassword(char *password, int size) {
 	return SBoxSuccess;
 }
 
-SBoxReturnType putFile(const char *localSubPath, const char *remoteSubPath);
-SBoxReturnType getFile(const char *remoteSubPath, const char *localSubPath);
+SBoxRet inputEncryptionInfo() {
+	char userName[40];
+	char password[40];
+	
+	if(inputEncryptionUserName(userName, sizeof(userName))!=SBoxSuccess)
+		return SBoxFail;
+	if(inputEncryptionPassword(password, sizeof(password))!=SBoxSuccess)
+		return SBoxFail;
+	SBoxRet retv = SBoxSetEncryptionInfo(userName, password);
+	
+	return retv;
+}
 
-SBoxReturnType changeRemoteDirectory(const char *path);
-SBoxReturnType listRemoteDirectory();
 
+#pragma mark show help
 
-SBoxReturnType SBoxShowHelp() {
+SBoxRet SBoxShowHelp() {
 	printf("\nExamples:\n"
 		   "\t%s %s : show help \n"
 		   "\t%s %s : show status \n"
@@ -143,14 +173,20 @@ SBoxReturnType SBoxShowHelp() {
 	return SBoxSuccess;
 }
 
-SBoxReturnType invalidArguments() {
+
+#pragma mark CLIMain
+
+SBoxRet invalidArguments() {
 	printf("\nWrong Arguments!\n");
 	SBoxShowHelp();
 	
 	return SBoxFail;
 }
 
-SBoxReturnType SBoxCLIMain(int argc, const char *argv[]) {
+SBoxRet SBoxCLIMain(int argc, const char *argv[]) {
+	
+	//inputAccountInfo();//test
+	
 	if(argc<2)
 		return invalidArguments();
 	
@@ -163,30 +199,10 @@ SBoxReturnType SBoxCLIMain(int argc, const char *argv[]) {
 		return SBoxShowHelp();
 	}else if(strcmp(cmdString, kCmdCStringSetAccount)==0&&argc==2){
 		//set account info
-		char userName[40];
-		char password[40];
-		SBoxAccountType accountType;
-		
-		if(inputAccountType(&accountType)!=SBoxSuccess)
-			return SBoxFail;
-		if(inputAccountUserName(userName, sizeof(userName))!=SBoxSuccess)
-			return SBoxFail;
-		if(inputAccountPassword(password, sizeof(password))!=SBoxSuccess)
-			return SBoxFail;
-		
-		SBoxReturnType retv = SBoxSetAccountInfo(accountType, userName, password);
-		return retv;
+		return inputAccountInfo();
 	}else if(strcmp(cmdString, kCmdCStringSetEncryption)==0&&argc==2){
 		//set encryption info
-		char userName[40];
-		char password[40];
-		
-		if(inputEncryptionUserName(userName, sizeof(userName))!=SBoxSuccess)
-			return SBoxFail;
-		if(inputEncryptionPassword(password, sizeof(password))!=SBoxSuccess)
-			return SBoxFail;
-		SBoxReturnType retv = SBoxSetEncryptionInfo(userName, password);
-		return retv;
+		return inputEncryptionInfo();
 	}else if(strcmp(cmdString, kCmdCStringListRemoteDirectory)==0&&argc==2){
 		//list remote directory
 		return SBoxListRemoteDirectory();

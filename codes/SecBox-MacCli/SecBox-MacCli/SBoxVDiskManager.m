@@ -20,4 +20,8 @@
 	return _manager;
 }
 
+- (SBoxVDRet) getToken {
+	
+}
+
 @end

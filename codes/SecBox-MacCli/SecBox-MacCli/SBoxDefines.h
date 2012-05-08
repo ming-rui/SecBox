@@ -33,4 +33,4 @@
 #	define	SLog(...)		/* */
 #endif 
 
-#define	SysLog(...)			NSLog(__VA_ARGS__) 
+#define	SysLog(...)			NSLog(__VA_ARGS__)

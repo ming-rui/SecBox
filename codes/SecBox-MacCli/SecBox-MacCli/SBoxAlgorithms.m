@@ -26,14 +26,14 @@
     size_t numBytesEncrypted = 0;
 	
     CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
-                                          kCCOptionPKCS7Padding | kCCOptionECBMode,
+                                          kCCOptionPKCS7Padding|kCCOptionECBMode,
                                           keyPtr, kCCKeySizeAES256,
                                           NULL,
                                           [data bytes], [data length],
                                           buffer, bufferSize,
                                           &numBytesEncrypted);
 	
-    if(cryptStatus != kCCSuccess){
+    if(cryptStatus!=kCCSuccess){
 		free(buffer);
 		return nil;
 	}
@@ -53,14 +53,14 @@
     size_t numBytesDecrypted = 0;
 	
     CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
-                                          kCCOptionPKCS7Padding | kCCOptionECBMode,
+                                          kCCOptionPKCS7Padding|kCCOptionECBMode,
                                           keyPtr, kCCKeySizeAES256,
                                           NULL,
                                           [data bytes], [data length],
                                           buffer, bufferSize,
                                           &numBytesDecrypted);
 	
-    if (cryptStatus != kCCSuccess){
+    if (cryptStatus!=kCCSuccess){
 		free(buffer);
 		return nil;
 	}
