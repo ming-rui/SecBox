@@ -110,6 +110,9 @@ int main(int argc, const char * argv[]) {
 		//SBoxVDiskQuota quota;
 		//[[SBoxVDiskManager sharedManager] getQuota:&quota];//test
 		
+		//NSMutableArray *list = [NSMutableArray array];//test
+		//[[SBoxVDiskManager sharedManager] getRootFileList:list];//test
+		
 		
 		[SBoxConfigs save];
 	}

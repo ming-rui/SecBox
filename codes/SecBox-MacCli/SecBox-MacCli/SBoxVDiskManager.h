@@ -45,8 +45,6 @@ typedef enum {
 	SBoxVDRetExceedLimits		= 900,	//...
 	SBoxVDRetInvalidParameter	= 909,	//getlist, get_quota
 }SBoxVDErrCode;
-
-
 typedef int SBoxVDRet;
 
 typedef struct {
@@ -56,6 +54,7 @@ typedef struct {
 #define SBoxVDiskQuotaMake(used,total)	((SBoxVDiskQuota){(used),(total)})
 
 @class SBJsonParser;
+@class SBoxVDiskFileInfo;
 
 @interface SBoxVDiskManager : NSObject {
 	@private
@@ -67,7 +66,7 @@ typedef struct {
 	//sate info
 	SBoxVDiskManagerState _state;
 	NSString *_token;
-	NSString *_dologID;
+	NSInteger _dologID;
 	
 	//dictionary
 	NSMutableArray *_root;
@@ -79,16 +78,16 @@ typedef struct {
 + (SBoxVDiskManager *) sharedManager;
 
 - (SBoxVDRet) getToken;
-//- (SBoxVDRet) keepToken;
+- (SBoxVDRet) keepToken;
 
 - (SBoxVDRet) getQuota:(SBoxVDiskQuota *)quota;
 - (SBoxVDRet) getRootFileList:(NSMutableArray *)fileList;
 
-//- (SBoxVDRet) getFileInfo:(SBoxVDFileInfo*)fileInfo;
-//- (SBoxVDRet) removeFileInRootWithFileName:(NSString *)fileName;
+- (SBoxVDRet) getFileInfo:(SBoxVDiskFileInfo *)fileInfo;
+- (SBoxVDRet) removeFileInRootWithFileName:(NSString *)fileName;
 
-- (SBoxVDRet) putFileToRootWithData:(NSData *)data;
-//- (SBoxVDRet) getFileFromRoot:(NSMutableData *)data;
+- (SBoxVDRet) putFileToRootWithFileName:(NSString *)fileName data:(NSData *)data;
+- (SBoxVDRet) getFileFromRoot:(NSMutableData *)data withFileName:(NSString *)fileName;
 
 
 ///* 下面的path是网盘上真正的path，不是程序虚拟的path */
