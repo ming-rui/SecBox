@@ -6,6 +6,9 @@
 #define kAccountTypeStringWeibo		"weibo"
 #define kAccountTypeStringWeipan	"weipan"
 
+#define kSBoxVDiskAppKey			"2172384310"
+#define kSBoxVDiskAppSecret			"800ae25ba6a1f3f4d8345080ca434bc7"
+
 typedef enum {
 	SBoxAccountTypeWeibo	=	0,
 	SBoxAccountTypeWeipan	=	1,

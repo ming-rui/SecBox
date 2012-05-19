@@ -24,7 +24,7 @@
 //CAUTION: delegate won't be retained
 //will delay the error reply with delegate methods, never return nil!
 + (id) connectionWithURLString:(NSString*)urlString delegate:(id<SBoxNetConnectionDelegate>)delegate;
-+ (id) connectionWithRequest:(NSURLRequest*)request delegate:(id<SBoxNetConnectionDelegate>)delegate;
++ (id) connectionWithRequest:(NSMutableURLRequest*)request delegate:(id<SBoxNetConnectionDelegate>)delegate;
 
 - (void) cancel;
 

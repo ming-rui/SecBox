@@ -10,15 +10,18 @@
 
 #import <CommonCrypto/CommonCryptor.h>
 #import "GTMStringEncoding.h"
+#import <CommonCrypto/CommonHMAC.h>
+#import "SBoxDefines.h"
 
 @implementation SBoxAlgorithms
 
 
-+ (NSData *) AES256EncryptWithData:(NSData*)data key:(NSString *)key {
++ (NSData *) AESEncryptWithData:(NSData*)data keySize:(SBoxAESKeySize)keySize key:(NSString *)key {
 	if([data length]==0||[key length]==0)
 		return nil;
 	
-    char keyPtr[kCCKeySizeAES256+1];
+	size_t ccKeySize = (keySize==SBoxAESKeySize128?kCCKeySizeAES128:kCCKeySizeAES256);
+    char keyPtr[ccKeySize+1];
     bzero(keyPtr, sizeof(keyPtr));
     [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
     size_t bufferSize = [data length]+kCCBlockSizeAES128;
@@ -27,7 +30,7 @@
 	
     CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128,
                                           kCCOptionPKCS7Padding|kCCOptionECBMode,
-                                          keyPtr, kCCKeySizeAES256,
+                                          keyPtr, ccKeySize,
                                           NULL,
                                           [data bytes], [data length],
                                           buffer, bufferSize,
@@ -41,11 +44,12 @@
 	return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
 }
 
-+ (NSData *) AES256DecryptWithData:(NSData*)data Key:(NSString *)key {
++ (NSData *) AESDecryptWithData:(NSData*)data keySize:(SBoxAESKeySize)keySize Key:(NSString *)key {
 	if([data length]==0||[key length]==0)
 		return nil;
 	
-    char keyPtr[kCCKeySizeAES256+1];
+	size_t ccKeySize = (keySize==SBoxAESKeySize128?kCCKeySizeAES128:kCCKeySizeAES256);
+    char keyPtr[ccKeySize+1];
     bzero(keyPtr, sizeof(keyPtr));
     [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
     size_t bufferSize = [data length]+kCCBlockSizeAES128;
@@ -54,7 +58,7 @@
 	
     CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128,
                                           kCCOptionPKCS7Padding|kCCOptionECBMode,
-                                          keyPtr, kCCKeySizeAES256,
+                                          keyPtr, ccKeySize,
                                           NULL,
                                           [data bytes], [data length],
                                           buffer, bufferSize,
@@ -77,6 +81,39 @@
 + (NSData *) base64wsDecodeWithString:(NSString *)string {
 	GTMStringEncoding *encoding = [GTMStringEncoding rfc4648Base64WebsafeStringEncoding];
 	return [encoding decode:string];
+}
+
++ (NSString*) hmacSHA256WithKey:(NSString*)key string:(NSString*)string {
+	const char *cStrKey = [key cStringUsingEncoding:NSUTF8StringEncoding];
+	const char *cString = [string cStringUsingEncoding:NSUTF8StringEncoding];
+	
+	unsigned char macOut[CC_SHA256_DIGEST_LENGTH];
+	CCHmac(kCCHmacAlgSHA256, cStrKey, strlen(cStrKey), cString, strlen(cString), macOut);
+	
+	NSMutableString *result = [NSMutableString string];
+	for(int i=0; i<CC_SHA256_DIGEST_LENGTH; i++)
+		[result appendFormat:@"%02x", macOut[i]];
+	
+	return result;
+}
+
++ (NSString*) descriptionWithNumOfBytes:(long long)numOfBytes {
+	static const int numOfUnits = 5;
+	static const long long rank[] = {1024ll*1024*1024*1024, 1024ll*1024*1024, 1024ll*1024, 1024ll, 1ll};
+	static const NSString *units[] = {@"TB",@"GB",@"MB",@"KB",@"bytes"};
+	
+	DCAssert(numOfBytes>=0,@"");
+	for(int i=0; i<numOfUnits ;i++){
+		if(numOfBytes<rank[i])
+			continue;
+		
+		double num = (double)numOfBytes/rank[i];
+		NSString *result = [NSString stringWithFormat:@"%.1llf %@", num, units[i]];
+		
+		return result;
+	}
+	
+	return @"0 bytes";
 }
 
 @end

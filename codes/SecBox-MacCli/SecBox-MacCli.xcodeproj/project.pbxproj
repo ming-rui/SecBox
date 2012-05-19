@@ -118,14 +118,14 @@
 		4C23112115566656001C131A /* SecBox-MacCli */ = {
 			isa = PBXGroup;
 			children = (
+				4C43EC9E1556B4D00051BACF /* gtm */,
+				4CD0D7B4155767CD00A2A7F7 /* foundations */,
+				4C23112415566656001C131A /* Supporting Files */,
 				4CD0D7E715584D6200A2A7F7 /* sbjason */,
 				4CD0D7C7155838FD00A2A7F7 /* SBoxNetConnection.h */,
 				4CD0D7C8155838FD00A2A7F7 /* SBoxNetConnection.m */,
-				4CD0D7B4155767CD00A2A7F7 /* foundations */,
-				4C43EC9E1556B4D00051BACF /* gtm */,
 				4C23112215566656001C131A /* main.m */,
 				4C23112615566656001C131A /* SecBox_MacCli.1 */,
-				4C23112415566656001C131A /* Supporting Files */,
 				4C6A1913155682BA00C6E914 /* SBoxAlgorithms.h */,
 				4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */,
 				4CD0D7B015575F7500A2A7F7 /* SBoxConfigs.h */,

@@ -12,18 +12,31 @@
 #import "SecBox.h"
 #import "SBoxAlgorithms.h"
 #import "SBoxConfigs.h"
+#import "SBoxVDiskManager.h"
 
 
 SBoxRet SBoxShowStatus() {
 	DLog("show status");
 	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
+	SBoxVDiskQuota quota;
+	const char *quotaString = "";
+	SBoxVDRet retv = [[SBoxVDiskManager sharedManager] getQuota:&quota];
+	if(retv==SBoxVDRetSuccess){
+		NSString *usedString = [SBoxAlgorithms descriptionWithNumOfBytes:quota.used];
+		NSString *totalString = [SBoxAlgorithms descriptionWithNumOfBytes:quota.total];
+		NSString *string = [NSString stringWithFormat:@"\t Server Used: %@, Server Total: %@\n", usedString, totalString];
+		quotaString = [string cStringUsingEncoding:NSUTF8StringEncoding];
+	}else{
+		quotaString = "\t Server status unavailable.\n";
+	}
 	printf("\nStatus:\n"
 		   "\t Account Type: %s, User Name: %s\n"
 		   "\t Encryption User Name: %s\n"
-		   "\n",
+		   "%s\n",
 		   SBoxAccountTypeString([configs accountType]),
 		   [[configs accountUserName] cStringUsingEncoding:NSUTF8StringEncoding],
-		   [[configs encryptionUserName] cStringUsingEncoding:NSUTF8StringEncoding]
+		   [[configs encryptionUserName] cStringUsingEncoding:NSUTF8StringEncoding],
+		   quotaString
 		   );
 	
 	return SBoxSuccess;
@@ -88,9 +101,15 @@ int main(int argc, const char * argv[]) {
 //	    NSLog(@"hello:%@",s);
 		
 		
-		SBoxCLIMain(argc, argv);
+		//SBoxCLIMain(argc, argv);
 	    
-		//SBoxShowStatus();//test
+		SBoxShowStatus();//test
+		
+		//[[SBoxVDiskManager sharedManager] getToken];//test
+		
+		//SBoxVDiskQuota quota;
+		//[[SBoxVDiskManager sharedManager] getQuota:&quota];//test
+		
 		
 		[SBoxConfigs save];
 	}

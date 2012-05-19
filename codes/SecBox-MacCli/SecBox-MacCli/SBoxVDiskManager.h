@@ -43,16 +43,19 @@ typedef enum {
 	SBoxVDRetInvalidToken		= 702,	//...
 	SBoxVDRetReUpload			= 721,	//upload_file
 	SBoxVDRetExceedLimits		= 900,	//...
-	SBoxVDRetInvalidParameter	= 909,	//getlist,
+	SBoxVDRetInvalidParameter	= 909,	//getlist, get_quota
 }SBoxVDErrCode;
 
 
 typedef int SBoxVDRet;
 
 typedef struct {
-	unsigned long long used;
-	unsigned long long total;
-}SBoxVDQuota;
+	long long used;
+	long long total;
+}SBoxVDiskQuota;
+#define SBoxVDiskQuotaMake(used,total)	((SBoxVDiskQuota){(used),(total)})
+
+@class SBJsonParser;
 
 @interface SBoxVDiskManager : NSObject {
 	@private
@@ -68,14 +71,17 @@ typedef struct {
 	
 	//dictionary
 	NSMutableArray *_root;
+	
+	//helper
+	SBJsonParser *_jsonParser;
 }
 
-+ (SBoxVDiskManager *) sharedVDiskManager;
++ (SBoxVDiskManager *) sharedManager;
 
 - (SBoxVDRet) getToken;
 //- (SBoxVDRet) keepToken;
 
-- (SBoxVDRet) getQuota:(SBoxVDQuota *)quota;
+- (SBoxVDRet) getQuota:(SBoxVDiskQuota *)quota;
 - (SBoxVDRet) getRootFileList:(NSMutableArray *)fileList;
 
 //- (SBoxVDRet) getFileInfo:(SBoxVDFileInfo*)fileInfo;
