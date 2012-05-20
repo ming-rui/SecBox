@@ -6,12 +6,17 @@
 //  Copyright (c) 2012 Mingrui. All rights reserved.
 //
 
-#define kSBoxURLPostBoundary			@"==boundary=="
+
+#define kSBoxVDiskAppKey			"2172384310"
+#define kSBoxVDiskAppSecret			"800ae25ba6a1f3f4d8345080ca434bc7"
 
 
-#define kSBoxVDiskAppTypeWeipan			@"local"
-#define kSBoxVDiskAppTypeWeibo			@"sinat"
-#define SBoxVDiskAppTypeWithAccountType(type)	((type)?kSBoxVDiskAppTypeWeipan:kSBoxVDiskAppTypeWeibo)
+#define kVDiskURLPostBoundary		@"==boundary=="
+
+
+#define kVDiskAppTypeWeibo			@"sinat"
+#define kVDiskAppTypeWeipan			@"local"
+#define VDiskAppTypeWithAccountType(type)	((type)?kVDiskAppTypeWeipan:kVDiskAppTypeWeibo)
 
 
 #define kVDiskURLGetToken			@"http://openapi.vdisk.me/?m=auth&a=get_token"
@@ -57,7 +62,7 @@
 
 
 #define kVDiskJsonLabelID			@"id"
-#define kVDiskJsonLabelFileName		@"name"
+#define kVDiskJsonLabelName			@"name"
 #define kVDiskJsonLabelDirID		@"dir_id"
 #define kVDiskJsonLabelCreationTime	@"ctime"
 #define kVDiskJsonLabelLastModificationTime	@"ltime"
@@ -68,10 +73,11 @@
 #define kVDiskJsonLabelSHA1			@"sha1"
 #define kVDiskJsonLabelThumbnailURL	@"thumbnail"
 #define kVDiskJsonLabelDownloadURL	@"s3_url"
+#define kVDiskJsonLabelNumOfDirs	@"dir_num"
+#define kVDiskJsonLabelNumOfFiles	@"file_num"
 
 
 typedef enum {
-	VDiskRetSuccess				= 0,	//...
 	VDiskRetOldDolog			= 602,	//...,~get_token
 	VDiskRetLackParameter		= 701,	//get_token, upload_file
 	VDiskRetInvalidToken		= 702,	//...,~get_token
@@ -118,8 +124,9 @@ typedef enum {
 }VDiskUploadFileErrCode;
 
 typedef enum {
-	VDiskRetConnectionError		= -1,	//[argumented]all
-	VDiskRetNoMatchingFile		= -2,	//[argumented]getRootFileID
+	/* -100 ~ -199 */
+	VDiskRetConnectionError		= -101,	//[argumented]all
+	VDiskRetNoMatchingFile		= -102,	//[argumented]getRootFileID
 }VDiskArgumentedErrCode;
 
 

@@ -8,8 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SecBox.h"
 #import "VDiskFileInfo.h"
+
+typedef enum{
+	VDiskAccountTypeWeibo	=	0,
+	VDiskAccountTypeWeipan	=	1,
+}VDiskAccountType;
 
 typedef enum {
 	VDiskManagerStateOffline = 0,
@@ -18,6 +22,7 @@ typedef enum {
 }VDiskManagerState;
 
 typedef int VDiskRet;
+#define	VDiskRetSuccess	0
 
 typedef struct {
 	long long used;
@@ -31,7 +36,7 @@ typedef struct {
 @interface SBoxVDiskManager : NSObject {
 	@private
 	//account info
-	SBoxAccountType _accountType;
+	VDiskAccountType _accountType;
 	NSString *_userName;
 	NSString *_password;
 	
@@ -40,14 +45,11 @@ typedef struct {
 	NSString *_token;
 	NSInteger _dologID;
 	
-	//dictionary
-	NSMutableArray *_root;
-	
 	//helper
 	SBJsonParser *_jsonParser;
 }
 
-+ (SBoxVDiskManager *) sharedManager;
++ (SBoxVDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
 
 - (VDiskRet) getToken;
 - (VDiskRet) keepToken;

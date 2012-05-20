@@ -13,6 +13,13 @@
 #import <CommonCrypto/CommonHMAC.h>
 #import "SBoxDefines.h"
 
+
+typedef enum {
+	SBoxAESKeySize128 = 0,
+	SBoxAESKeySize256,
+}SBoxAESKeySize;
+
+
 @implementation SBoxAlgorithms
 
 
@@ -70,6 +77,14 @@
 	}
 	
 	return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+}
+
++ (NSData *) encryptWithData:(NSData *)data key:(NSString *)key {
+	return [self AESEncryptWithData:data keySize:SBoxAESKeySize128 key:key];
+}
+
++ (NSData *) decryptWithData:(NSData *)data Key:(NSString *)key {
+	return [self AESDecryptWithData:data keySize:SBoxAESKeySize128 Key:key];
 }
 
 

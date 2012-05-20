@@ -6,9 +6,6 @@
 #define kAccountTypeStringWeibo		"weibo"
 #define kAccountTypeStringWeipan	"weipan"
 
-#define kSBoxVDiskAppKey			"2172384310"
-#define kSBoxVDiskAppSecret			"800ae25ba6a1f3f4d8345080ca434bc7"
-
 typedef enum {
 	SBoxAccountTypeWeibo	=	0,
 	SBoxAccountTypeWeipan	=	1,
@@ -19,7 +16,8 @@ typedef enum {
 typedef enum {
 	SBoxSuccess = 0,
 	SBoxFail = -1,
-}SBoxRet;
+}SBoxErrCode;
+typedef int SBoxRet;
 
 
 SBoxRet SBoxCLIMain(int argc, const char *argv[]);
@@ -44,7 +42,7 @@ SBoxRet SBoxChangeRemoteDirectory(const char *path);
 
 SBoxRet SBoxPutFile(const char *localSubPath, const char *remoteSubPath);
 SBoxRet SBoxGetFile(const char *remoteSubPath, const char *localSubPath);
-//SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath);
+SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath);
 
 
 #pragma mark synchronization

@@ -9,7 +9,6 @@
 #import "SBoxVDiskManager.h"
 
 #import "SBoxDefines.h"
-#import "SBoxConfigs.h"
 #import "SBoxAlgorithms.h"
 #import <CommonCrypto/CommonHMAC.h>
 #import "SBJsonParser.h"
@@ -62,23 +61,12 @@
 
 @synthesize token=_token;
 
-+ (SBoxVDiskManager *) sharedManager {
-	static SBoxVDiskManager *_manager = nil;
-	@synchronized(self) {
-		if(_manager==nil)
-			_manager = [[self alloc] init];
-	}
-	
-	return _manager;
-}
-
-- (id) init {
+- (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
 	self = [super init];
 	if(self){
-		SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
-		_accountType = [configs accountType];
-		_userName = [[configs accountUserName] retain];
-		_password = [[configs accountPassword] retain];
+		_accountType = accountType;
+		_userName = [userName retain];
+		_password = [password retain];
 		
 		_jsonParser = [[SBJsonParser alloc] init];
 	}
@@ -90,10 +78,13 @@
 	[_userName release];
 	[_password release];
 	[_token release];
-	[_root release];
 	[_jsonParser release];
 	
 	[super dealloc];
+}
+
++ (SBoxVDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
+	return [[[self alloc] initWithAccountType:accountType userName:userName password:password] autorelease];
 }
 
 NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
@@ -140,10 +131,10 @@ NSMutableURLRequest* requestToPostWithURLStringAndDict(NSString *urlString, NSDi
 	
 	[request setHTTPMethod:@"POST"];
 	
-	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", kSBoxURLPostBoundary];
+	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", kVDiskURLPostBoundary];
 	[request addValue:contentType forHTTPHeaderField:@"Content-Type"];
 	
-	NSData *contentData = dataToPostWithDictAndBoundary(dict, kSBoxURLPostBoundary);
+	NSData *contentData = dataToPostWithDictAndBoundary(dict, kVDiskURLPostBoundary);
 	
 	NSString *contentLength = [NSString stringWithFormat:@"%u", [contentData length]];
 	[request addValue:contentLength forHTTPHeaderField:@"Content-Length"];
@@ -177,7 +168,7 @@ NSString* tokenWithDict(NSDictionary *dict) {
 	
 	NSString *appKey = [NSString stringWithCString:kSBoxVDiskAppKey encoding:NSUTF8StringEncoding];
 	NSString *appSecret = [NSString stringWithCString:kSBoxVDiskAppSecret encoding:NSUTF8StringEncoding];
-	NSString *appType = SBoxVDiskAppTypeWithAccountType(_accountType);
+	NSString *appType = VDiskAppTypeWithAccountType(_accountType);
 	NSString *timeString = [NSString stringWithFormat:@"%li",time((time_t*)NULL)];
 	
 	NSString *string = [NSString stringWithFormat:@"%@=%@&%@=%@&%@=%@&%@=%@", 
@@ -255,7 +246,7 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 		_dologID = dologID;
 	}
 	
-	return SBoxSuccess;
+	return VDiskRetSuccess;
 }
 
 VDiskQuota quotaWithDict(NSDictionary *dict) {
@@ -315,8 +306,9 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	NSArray *list = [data objectForKey:kVDiskJsonLabelList];
 	DCAssert(list!=nil,@"");
 	for(NSDictionary *item in list){
-		VDiskFileInfo *fileInfo = [VDiskFileInfo infoWithListItemDict:item];
-		[fileList addObject:fileInfo];
+		VDiskFileInfo *itemInfo = [VDiskFileInfo itemInfoWithDict:item];
+		if([itemInfo isFile])
+			[fileList addObject:itemInfo];
 	}
 }
 
@@ -325,7 +317,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 							  _token, kVDiskPostLabelToken,
 							  [NSNumber numberWithInt:dirID], kVDiskPostLabelDirID,
 							  [NSNumber numberWithInt:page], kVDiskPostLabelPage,
-							  [NSNumber numberWithInt:2], kVDiskPostLabelPageSize,
+							  //[NSNumber numberWithInt:2], kVDiskPostLabelPageSize,
 							  [NSNumber numberWithInt:_dologID], kVDiskPostLabelDologID,
 							  nil];
 	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLGetList, postDict);
@@ -373,8 +365,11 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	
 	*fileID = VDiskFileIDInvalid;
 	for(VDiskFileInfo *fileInfo in fileList)
-		if([[fileInfo fileName] isEqualToString:fileName])
-			*fileID = [fileInfo fileID];
+		if([[fileInfo name] isEqualToString:fileName]){
+			*fileID = [fileInfo itemID];
+			DAssert([fileInfo isFile],@"");
+			break;
+		}
 	
 	if(*fileID==VDiskFileIDInvalid)
 		return VDiskRetNoMatchingFile;
@@ -406,8 +401,9 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 		return errCode;
 	
 	NSDictionary *dataItem = [dict objectForKey:kVDiskJsonLabelData];
-	DAssert(data!=nil,@"");
-	*fileInfo = [VDiskFileInfo infoWithFileInfoDict:dataItem];
+	DAssert(dataItem!=nil,@"");
+	*fileInfo = [VDiskFileInfo itemInfoWithDict:dataItem];
+	DAssert([*fileInfo isFile],@"");
 	
 	return VDiskRetSuccess;
 }
@@ -503,7 +499,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
-	NSString *urlString = [fileInfo downloadURL];
+	NSString *urlString = [fileInfo fileURL];
 	DAssert(urlString!=nil,@"");
 	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];

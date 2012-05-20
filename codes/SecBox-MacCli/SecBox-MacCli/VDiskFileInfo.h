@@ -9,14 +9,18 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-	VDiskFileInfoTypeList = 0,
-	VDiskFileInfoTypeInfo,
-}VDiskFileInfoType;
+	VDiskItemTypeListFile = 0,
+	VDiskItemTypeInfoFile,
+	VDiskItemTypeDirectory,
+}VDiskItemType;
 
-typedef NSInteger VDiskFileID;
+typedef NSInteger VDiskItemID;
+#define VDiskItemIDInvalid	-1
+
+typedef VDiskItemID VDiskFileID;
 #define VDiskFileIDInvalid	-1
 
-typedef NSInteger VDiskDirID;
+typedef VDiskItemID VDiskDirID;
 #define VDiskDirIDInvalid	-1
 #define VDiskRootDirID		0
 
@@ -25,33 +29,33 @@ typedef long long VDiskFileSize;
 
 @interface VDiskFileInfo : NSObject {
 	@private
-	VDiskFileInfoType	_infoType;
-	VDiskFileID _fileID;	//id
-	NSString *_fileName;	//name
-	VDiskDirID _dirID;		//dir_id
-	NSDate *_creationDate;	//ctime
-	NSDate *_lastModificationDate;	//ltime
-	VDiskFileSize _size;	//(info)size, (list)byte/length
-	NSString *_type;		//type
-	NSString *_md5;			//md5
-	NSString *_sha1;		//(list)sha1
-	NSString *_thumbnailURL;//(list)thumbnail
-	NSString *_downloadURL;	//(info)s3_url
+	VDiskItemType _infoType;
+	
+	VDiskItemID _itemID;			//id				-file&dir
+	NSString *_name;				//name				-file&dir
+	NSDate *_creationDate;			//ctime				-file&dir
+	NSDate *_lastModificationDate;	//ltime				-file&dir
+	
+	VDiskFileSize _fileSize;		//(info)size, (list)byte/length	-file
+	NSString *_fileType;			//type				-file
+	NSString *_fileMd5;				//md5				-file
+	NSString *_fileURL;				//(info)s3_url		-file
+	
+	//pid, dir_num, file_num							-dir
+	//dir_id, sha1, share, thumbnail, url				-file
 }
 
-@property(nonatomic,assign) VDiskFileID fileID;
-@property(nonatomic,retain) NSString *fileName;
-@property(nonatomic,assign) VDiskDirID dirID;
+@property(nonatomic,assign) VDiskItemID itemID;
+@property(nonatomic,retain) NSString *name;
 @property(nonatomic,retain) NSDate *creationDate;
 @property(nonatomic,retain) NSDate *lastModificationDate;
-@property(nonatomic,assign) VDiskFileSize size;
-@property(nonatomic,retain) NSString *type;
-@property(nonatomic,retain) NSString *md5;
-@property(nonatomic,retain) NSString *sha1;
-@property(nonatomic,retain) NSString *thumbnailURL;
-@property(nonatomic,retain) NSString *downloadURL;
+@property(nonatomic,readonly) BOOL isFile;
+@property(nonatomic,readonly) BOOL isDirectory;
+@property(nonatomic,assign) VDiskFileSize fileSize;
+@property(nonatomic,retain) NSString *fileType;
+@property(nonatomic,retain) NSString *fileMd5;
+@property(nonatomic,retain) NSString *fileURL;
 
-+ (VDiskFileInfo*) infoWithListItemDict:(NSDictionary*)dict;
-+ (VDiskFileInfo*) infoWithFileInfoDict:(NSDictionary*)dict;
++ (VDiskFileInfo*) itemInfoWithDict:(NSDictionary*)dict;
 
 @end

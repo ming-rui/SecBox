@@ -12,8 +12,7 @@
 #import "SecBox.h"
 #import "SBoxAlgorithms.h"
 #import "SBoxConfigs.h"
-#import "SBoxVDiskManager.h"
-#import "VDiskConstants.h"
+#import "SBoxFileSystem.h"
 
 
 SBoxRet SBoxShowStatus() {
@@ -21,7 +20,7 @@ SBoxRet SBoxShowStatus() {
 	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
 	VDiskQuota quota;
 	const char *quotaString = "";
-	VDiskRet retv = [[SBoxVDiskManager sharedManager] getQuota:&quota];
+	VDiskRet retv = [[[SBoxFileSystem sharedSystem] diskManager] getQuota:&quota];
 	if(retv==VDiskRetSuccess){
 		NSString *usedString = [SBoxAlgorithms descriptionWithNumOfBytes:quota.used];
 		NSString *totalString = [SBoxAlgorithms descriptionWithNumOfBytes:quota.total];
@@ -56,9 +55,20 @@ SBoxRet SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, co
 
 SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password) {
 	DLog("set encryption info");
+	//检测数据合法性
+	NSString *userNameString = [NSString stringWithCString:userName encoding:NSUTF8StringEncoding];
+	NSString *passwordString = [NSString stringWithCString:password encoding:NSUTF8StringEncoding];
+	if([userNameString length]==0||[passwordString length]==0)
+		return SBoxFail;
+	for(int i=0; i<[userNameString length]; i++){
+		unichar ch = [userNameString characterAtIndex:i];
+		if(ch=='['||ch==']')
+			return SBoxFail;
+	}
+	
 	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
-	[configs setEncryptionUserName:[NSString stringWithCString:userName encoding:NSUTF8StringEncoding]];
-	[configs setEncryptionPassword:[NSString stringWithCString:password encoding:NSUTF8StringEncoding]];
+	[configs setEncryptionUserName:userNameString];
+	[configs setEncryptionPassword:passwordString];
 	
 	return SBoxSuccess;
 }
@@ -87,6 +97,12 @@ SBoxRet SBoxGetFile(const char *remoteSubPath, const char *localSubPath) {
 	return SBoxSuccess;
 }
 
+SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath) {
+	DLog("remove remote file {%s}",remoteSubPath);
+	
+	return SBoxSuccess;
+}
+
 int main(int argc, const char * argv[]) {
 	@autoreleasepool {
 	    
@@ -111,8 +127,9 @@ int main(int argc, const char * argv[]) {
 		//SBoxVDiskQuota quota;
 		//[[SBoxVDiskManager sharedManager] getQuota:&quota];//test
 		
-		//NSMutableArray *list = [NSMutableArray array]; 
-		//[[SBoxVDiskManager sharedManager] getRootFileList:list];//test
+		NSMutableArray *list = [NSMutableArray array];//test
+		SBoxVDiskManager *manager = [[SBoxFileSystem sharedSystem] diskManager];//test
+		[manager getRootFileList:list];//test
 		
 		//VDiskFileID fileID;//test
 		//[[SBoxVDiskManager sharedManager] getRootFileID:&fileID withFileName:@"showimg785.jpg"];//test
@@ -139,6 +156,10 @@ int main(int argc, const char * argv[]) {
 		//NSData *data = nil;//test
 		//SBoxVDiskManager *manager = [SBoxVDiskManager sharedManager];//test
 		//[manager downloadFileFromRoot:&data withFileName:@"foobar2000.exe"];//test
+		
+		//SBoxFileSystem *system = [SBoxFileSystem sharedSystem];//test
+		//NSString *s = [system fileNameWithPath:@"/abc/def/ghi"];//test
+		//NSString *s2 = [system pathWithFileName:s];//test
 		
 		[SBoxConfigs save];
 	}

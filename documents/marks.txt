@@ -20,3 +20,5 @@ hmacSHA256：与服务器通讯
 md5：文件版本检测
 AES128：数据加密
 base64ws：文件名合法化
+
+encryption user name 不能有方括号[]，不能为空

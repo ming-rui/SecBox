@@ -14,6 +14,7 @@
 		4C43ECA21556B4D00051BACF /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C43ECA11556B4D00051BACF /* GTMStringEncoding.m */; };
 		4C6A1900155678B800C6E914 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6A18FF155678B800C6E914 /* Security.framework */; };
 		4C6A1915155682BA00C6E914 /* SBoxAlgorithms.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */; };
+		4CC8416E156933C000882D56 /* SBoxFileSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8416D156933C000882D56 /* SBoxFileSystem.m */; };
 		4CD0D7B215575F7500A2A7F7 /* SBoxConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7B115575F7500A2A7F7 /* SBoxConfigs.m */; };
 		4CD0D7B7155767CD00A2A7F7 /* SecBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7B5155767CD00A2A7F7 /* SecBox.c */; };
 		4CD0D7C9155838FD00A2A7F7 /* SBoxNetConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7C8155838FD00A2A7F7 /* SBoxNetConnection.m */; };
@@ -41,20 +42,22 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4C21D3CD1567EB8100AAC149 /* VDiskFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; path = VDiskFileInfo.h; sourceTree = "<group>"; };
+		4C21D3CD1567EB8100AAC149 /* VDiskFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDiskFileInfo.h; sourceTree = "<group>"; };
 		4C21D3CE1567EB8100AAC149 /* VDiskFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDiskFileInfo.m; sourceTree = "<group>"; };
 		4C23111B15566656001C131A /* secbox */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = secbox; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C23111F15566656001C131A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C23112215566656001C131A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C23112515566656001C131A /* SecBox-MacCli-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SecBox-MacCli-Prefix.pch"; sourceTree = "<group>"; };
 		4C23112615566656001C131A /* SecBox_MacCli.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SecBox_MacCli.1; sourceTree = "<group>"; };
-		4C2CF7321568399D004F7BB2 /* VDiskConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; path = VDiskConstants.h; sourceTree = "<group>"; };
+		4C2CF7321568399D004F7BB2 /* VDiskConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDiskConstants.h; sourceTree = "<group>"; };
 		4C43EC9F1556B4D00051BACF /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		4C43ECA01556B4D00051BACF /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
 		4C43ECA11556B4D00051BACF /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
 		4C6A18FF155678B800C6E914 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		4C6A1913155682BA00C6E914 /* SBoxAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxAlgorithms.h; sourceTree = "<group>"; };
 		4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxAlgorithms.m; sourceTree = "<group>"; };
+		4CC8416C156933BF00882D56 /* SBoxFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxFileSystem.h; sourceTree = "<group>"; };
+		4CC8416D156933C000882D56 /* SBoxFileSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxFileSystem.m; sourceTree = "<group>"; };
 		4CD0D7B015575F7500A2A7F7 /* SBoxConfigs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxConfigs.h; sourceTree = "<group>"; };
 		4CD0D7B115575F7500A2A7F7 /* SBoxConfigs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxConfigs.m; sourceTree = "<group>"; };
 		4CD0D7B5155767CD00A2A7F7 /* SecBox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SecBox.c; sourceTree = "<group>"; };
@@ -140,6 +143,8 @@
 				4CD0D7D015583FC400A2A7F7 /* SBoxVDiskManager.m */,
 				4C21D3CD1567EB8100AAC149 /* VDiskFileInfo.h */,
 				4C21D3CE1567EB8100AAC149 /* VDiskFileInfo.m */,
+				4CC8416C156933BF00882D56 /* SBoxFileSystem.h */,
+				4CC8416D156933C000882D56 /* SBoxFileSystem.m */,
 			);
 			path = "SecBox-MacCli";
 			sourceTree = "<group>";
@@ -259,6 +264,7 @@
 				4CD0D7FB15584D6200A2A7F7 /* SBJsonTokeniser.m in Sources */,
 				4CD0D7FC15584D6200A2A7F7 /* SBJsonUTF8Stream.m in Sources */,
 				4C21D3CF1567EB8100AAC149 /* VDiskFileInfo.m in Sources */,
+				4CC8416E156933C000882D56 /* SBoxFileSystem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,20 +9,15 @@
 #import <Foundation/Foundation.h>
 
 
-typedef enum {
-	SBoxAESKeySize128 = 0,
-	SBoxAESKeySize256,
-}SBoxAESKeySize;
-
 @interface SBoxAlgorithms
 
-+ (NSData *) AESEncryptWithData:(NSData*)data keySize:(SBoxAESKeySize)keySize key:(NSString *)key;
-+ (NSData *) AESDecryptWithData:(NSData*)data keySize:(SBoxAESKeySize)keySize Key:(NSString *)key;
++ (NSData *) encryptWithData:(NSData *)data key:(NSString *)key;
++ (NSData *) decryptWithData:(NSData *)data Key:(NSString *)key;
 
 + (NSString *) base64wsEncodeWithData:(NSData *)data;
 + (NSData *) base64wsDecodeWithString:(NSString *)string;
 
-+ (NSString*) hmacSHA256WithKey:(NSString*)key string:(NSString*)string;
++ (NSString*) hmacSHA256WithKey:(NSString *)key string:(NSString *)string;
 
 + (NSString*) descriptionWithNumOfBytes:(long long)numOfBytes;
 
