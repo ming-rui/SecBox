@@ -9,6 +9,7 @@
 #import "SBoxVDiskFileInfo.h"
 
 #import "SBoxVDiskConstants.h"
+#import "SBoxDefines.h"
 
 @implementation SBoxVDiskFileInfo
 
@@ -28,24 +29,55 @@
 	self = [super init];
 	if(self){
 		_infoType = infoType;
-		[self setFileID:[[dict objectForKey:kSBoxVDiskJsonLabelID] integerValue]];
-		[self setFileName:[dict objectForKey:kSBoxVDiskJsonLabelFileName]];
-		[self setDirID:[[dict objectForKey:kSBoxVDiskJsonLabelDirID] integerValue]];
-		NSTimeInterval ctime = (NSTimeInterval)[[dict objectForKey:kSBoxVDiskJsonLabelCreationTime] integerValue];
-		[self setCreationDate:[NSDate dateWithTimeIntervalSince1970:ctime]];
-		NSTimeInterval ltime = (NSTimeInterval)[[dict objectForKey:kSBoxVDiskJsonLabelLastModificationTime] integerValue];
-		[self setLastModificationDate:[NSDate dateWithTimeIntervalSince1970:ltime]];
-		[self setType:[dict objectForKey:kSBoxVDiskJsonLabelType]];
-		[self setMd5:[dict objectForKey:kSBoxVDiskJsonLabelMD5]];
+		_fileID = VDiskFileIDInvalid;
+		_dirID = VDiskDirIDInvalid;
+		_size = VDiskFileSizeInvalid;
+		
+		NSNumber *fileIDNum = [dict objectForKey:kVDiskJsonLabelID];
+		if(fileIDNum!=nil)
+			[self setFileID:[fileIDNum integerValue]];
+		
+		[self setFileName:[dict objectForKey:kVDiskJsonLabelFileName]];
+		
+		NSNumber *dirIDNum = [dict objectForKey:kVDiskJsonLabelDirID];
+		if(dirIDNum!=nil)
+			[self setDirID:[dirIDNum integerValue]];
+		
+		NSNumber *cTimeNum = [dict objectForKey:kVDiskJsonLabelCreationTime];
+		if(cTimeNum!=nil)
+			[self setCreationDate:[NSDate dateWithTimeIntervalSince1970:((NSTimeInterval)[cTimeNum integerValue])]];
+		
+		NSNumber *lTimeNum = [dict objectForKey:kVDiskJsonLabelLastModificationTime];
+		if(lTimeNum!=nil)
+			[self setLastModificationDate:[NSDate dateWithTimeIntervalSince1970:((NSTimeInterval)[lTimeNum integerValue])]];
+		
+		[self setType:[dict objectForKey:kVDiskJsonLabelType]];
+		[self setMd5:[dict objectForKey:kVDiskJsonLabelMD5]];
 		
 		if(_infoType==SBoxVDiskFileInfoTypeList){
-			[self setSize:[[dict objectForKey:kSBoxVDiskJsonLabelSize_list] longLongValue]];
-			[self setSha1:[dict objectForKey:kSBoxVDiskJsonLabelSHA1]];
-			[self setThumbnailURL:[dict objectForKey:kSBoxVDiskJsonLabelThumbnailURL]];
+			NSNumber *fileSizeNum = [dict objectForKey:kVDiskJsonLabelSize_list];
+			if(fileSizeNum!=nil)
+				[self setSize:[fileSizeNum longLongValue]];
+			
+			[self setSha1:[dict objectForKey:kVDiskJsonLabelSHA1]];
+			
+			[self setThumbnailURL:[dict objectForKey:kVDiskJsonLabelThumbnailURL]];
 		}else if(_infoType==SBoxVDiskFileInfoTypeInfo){
-			[self setSize:[[dict objectForKey:kSBoxVDiskJsonLabelSize_info] longLongValue]];
-			[self setDownloadURL:[dict objectForKey:kSBoxVDiskJsonLabelDownloadURL]];
+			NSNumber *fileSizeNum = [dict objectForKey:kVDiskJsonLabelSize_info];
+			if(fileSizeNum!=nil)
+				[self setSize:[fileSizeNum longLongValue]];
+			
+			[self setDownloadURL:[dict objectForKey:kVDiskJsonLabelDownloadURL]];
 		}
+		
+		DAssert(_fileID!=VDiskFileIDInvalid,@"");
+		DAssert(_fileName!=nil,@"");
+		DAssert(_dirID!=VDiskDirIDInvalid,@"");
+		DAssert(_creationDate!=nil,@"");
+		DAssert(_lastModificationDate!=nil,@"");
+		DAssert(_type!=nil,@"");
+		DAssert(_md5!=nil,@"");
+		DAssert(_size!=VDiskFileSizeInvalid,@"");
 	}
 	
 	return self;

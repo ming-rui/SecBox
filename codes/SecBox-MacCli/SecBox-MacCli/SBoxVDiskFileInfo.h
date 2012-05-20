@@ -13,15 +13,24 @@ typedef enum {
 	SBoxVDiskFileInfoTypeInfo,
 }SBoxVDiskFileInfoType;
 
+typedef NSInteger VDiskFileID;
+#define VDiskFileIDInvalid	-1
+
+typedef NSInteger VDiskDirID;
+#define VDiskDirIDInvalid	-1
+
+typedef long long VDiskFileSize;
+#define VDiskFileSizeInvalid	-1
+
 @interface SBoxVDiskFileInfo : NSObject {
 	@private
 	SBoxVDiskFileInfoType	_infoType;
-	NSInteger _fileID;		//id
+	VDiskFileID _fileID;	//id
 	NSString *_fileName;	//name
-	NSInteger _dirID;		//dir_id
+	VDiskDirID _dirID;		//dir_id
 	NSDate *_creationDate;	//ctime
 	NSDate *_lastModificationDate;	//ltime
-	long long _size;		//(info)size, (list)byte/length
+	VDiskFileSize _size;	//(info)size, (list)byte/length
 	NSString *_type;		//type
 	NSString *_md5;			//md5
 	NSString *_sha1;		//(list)sha1
@@ -29,12 +38,12 @@ typedef enum {
 	NSString *_downloadURL;	//(info)s3_url
 }
 
-@property(nonatomic,assign) NSInteger fileID;
+@property(nonatomic,assign) VDiskFileID fileID;
 @property(nonatomic,retain) NSString *fileName;
-@property(nonatomic,assign) NSInteger dirID;
+@property(nonatomic,assign) VDiskDirID dirID;
 @property(nonatomic,retain) NSDate *creationDate;
 @property(nonatomic,retain) NSDate *lastModificationDate;
-@property(nonatomic,assign) long long size;
+@property(nonatomic,assign) VDiskFileSize size;
 @property(nonatomic,retain) NSString *type;
 @property(nonatomic,retain) NSString *md5;
 @property(nonatomic,retain) NSString *sha1;

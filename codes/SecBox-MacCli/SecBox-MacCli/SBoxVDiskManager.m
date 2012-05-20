@@ -13,7 +13,6 @@
 #import "SBoxAlgorithms.h"
 #import <CommonCrypto/CommonHMAC.h>
 #import "SBJsonParser.h"
-#import "SBoxVDiskFileInfo.h"
 #import "SBoxVDiskConstants.h"
 
 
@@ -60,7 +59,7 @@
 	[super dealloc];
 }
 
-- (NSData*) dataToPostWithDict:(NSDictionary*)dict boundary:(NSString*)boundary {
+NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
 	NSMutableData *data = [NSMutableData data];
 	
 	NSString *string = nil;
@@ -76,7 +75,7 @@
 		}else if([value isKindOfClass:[NSNumber class]]){
 			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, [value stringValue]];
 		}else{
-			DAssert(NO,@"");
+			DCAssert(NO,@"");
 		}
 		[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		
@@ -90,7 +89,7 @@
 	return data;
 }
 
-- (NSMutableURLRequest*) requestToPostWithURLString:(NSString*)urlString dict:(NSDictionary*)dict {
+NSMutableURLRequest* requestToPostWithURLStringAndDict(NSString *urlString, NSDictionary *dict) {
 	NSURL *url = [NSURL URLWithString:urlString];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
 	
@@ -99,7 +98,7 @@
 	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", kSBoxURLPostBoundary];
 	[request addValue:contentType forHTTPHeaderField:@"Content-Type"];
 	
-	NSData *contentData = [self dataToPostWithDict:dict boundary:kSBoxURLPostBoundary];
+	NSData *contentData = dataToPostWithDictAndBoundary(dict, kSBoxURLPostBoundary);
 	
 	NSString *contentLength = [NSString stringWithFormat:@"%u", [contentData length]];
 	[request addValue:contentLength forHTTPHeaderField:@"Content-Length"];
@@ -109,9 +108,9 @@
 	return request;
 }
 
-SBoxVDRet errCodeWithDict(NSDictionary *dict) {
+VDiskRet errCodeWithDict(NSDictionary *dict) {
 	DCAssert(dict!=nil,@"");
-	NSNumber *errCode = [dict objectForKey:kSBoxVDiskJsonLabelErrCode];
+	NSNumber *errCode = [dict objectForKey:kVDiskJsonLabelErrCode];
 	DCAssert(errCode!=nil,@"");
 	
 	return [errCode intValue];
@@ -119,16 +118,16 @@ SBoxVDRet errCodeWithDict(NSDictionary *dict) {
 
 NSString* tokenWithDict(NSDictionary *dict) {
 	DCAssert(errCodeWithDict(dict)==0,@"");
-	NSDictionary *data = [dict objectForKey:kSBoxVDiskJsonLabelData];
+	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
 	DCAssert(data!=nil,@"");
-	NSString *token = [data objectForKey:kSBoxVDiskJsonLabelToken];
+	NSString *token = [data objectForKey:kVDiskJsonLabelToken];
 	DCAssert(token!=nil,@"");
 	
 	return token;
 }
 
-- (SBoxVDRet) getToken {
-	_state = SBoxVDiskManagerStateOffline;
+- (VDiskRet) getToken {
+	_state = VDiskManagerStateOffline;
 	[self setToken:nil];
 	
 	NSString *appKey = [NSString stringWithCString:kSBoxVDiskAppKey encoding:NSUTF8StringEncoding];
@@ -137,67 +136,67 @@ NSString* tokenWithDict(NSDictionary *dict) {
 	NSString *timeString = [NSString stringWithFormat:@"%li",time((time_t*)NULL)];
 	
 	NSString *string = [NSString stringWithFormat:@"%@=%@&%@=%@&%@=%@&%@=%@", 
-						kSBoxVDiskPostLabelUserName, _userName,
-						kSBoxVDiskPostLabelAppKey, appKey,
-						kSBoxVDiskPostLabelPassword, _password,
-						kSBoxVDiskPostLabelTime, timeString];
+						kVDiskPostLabelUserName, _userName,
+						kVDiskPostLabelAppKey, appKey,
+						kVDiskPostLabelPassword, _password,
+						kVDiskPostLabelTime, timeString];
 	NSString *signature = [SBoxAlgorithms hmacSHA256WithKey:appSecret string:string];
 	
 	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
-						  appType, kSBoxVDiskPostLabelAccountType,
-						  _userName, kSBoxVDiskPostLabelUserName,
-						  _password, kSBoxVDiskPostLabelPassword,
-						  appKey, kSBoxVDiskPostLabelAppKey,
-						  timeString, kSBoxVDiskPostLabelTime,
-						  signature, kSBoxVDiskPostLabelSignature,
+						  appType, kVDiskPostLabelAccountType,
+						  _userName, kVDiskPostLabelUserName,
+						  _password, kVDiskPostLabelPassword,
+						  appKey, kVDiskPostLabelAppKey,
+						  timeString, kVDiskPostLabelTime,
+						  signature, kVDiskPostLabelSignature,
 						  nil];
-	NSMutableURLRequest *urlRequest = [self requestToPostWithURLString:kSBoxVDiskURLGetToken dict:postDict];
+	NSMutableURLRequest *urlRequest = requestToPostWithURLStringAndDict(kVDiskURLGetToken, postDict);
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:nil error:nil];
 	NSDictionary *dict = [_jsonParser objectWithData:data];
 	
 	if(dict==nil)
-		return SBoxVDRetConnectionError;
+		return VDiskRetConnectionError;
 	
-	SBoxVDRet errCode = errCodeWithDict(dict);
+	VDiskRet errCode = errCodeWithDict(dict);
 	
-	if(errCode!=SBoxVDRetSuccess)
+	if(errCode!=VDiskRetSuccess)
 		return errCode;
 	
-	_state = SBoxVDiskManagerStateOnline;
+	_state = VDiskManagerStateOnline;
 	NSString *token = tokenWithDict(dict);
 	[self setToken:token];
 	
-	return SBoxVDRetSuccess;
+	return VDiskRetSuccess;
 }
 
 NSInteger dologIDWithDict(NSDictionary *dict) {
 	DCAssert(dict!=nil,@"");
-	NSNumber *dologID = [dict objectForKey:kSBoxVDiskJsonLabelDologID];
+	NSNumber *dologID = [dict objectForKey:kVDiskJsonLabelDologID];
 	DCAssert(dologID!=nil,@"");
 	
 	return [dologID intValue];
 }
 
-- (SBoxVDRet) keepToken {
-	if(_state==SBoxVDiskManagerStateOffline)
+- (VDiskRet) keepToken {
+	if(_state==VDiskManagerStateOffline)
 		return [self getToken];
 	
 	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
-							  _token, kSBoxVDiskPostLabelToken,
-							  [NSNumber numberWithInt:_dologID], kSBoxVDiskPostLabelDologID,
+							  _token, kVDiskPostLabelToken,
+							  [NSNumber numberWithInt:_dologID], kVDiskPostLabelDologID,
 							  nil];
-	NSMutableURLRequest *request = [self requestToPostWithURLString:kSBoxVDiskURLKeepToken dict:postDict];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLKeepToken, postDict);
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 	NSDictionary *dict = [_jsonParser objectWithData:data];
 	
 	if(dict==nil)
-		return SBoxVDRetConnectionError;
+		return VDiskRetConnectionError;
 	
-	SBoxVDRet errCode = errCodeWithDict(dict);
+	VDiskRet errCode = errCodeWithDict(dict);
 	
-	if(errCode!=SBoxVDRetSuccess)
+	if(errCode!=VDiskRetSuccess)
 		return [self getToken];
 	
 	NSInteger dologID = dologIDWithDict(dict);
@@ -209,51 +208,51 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 	return SBoxSuccess;
 }
 
-SBoxVDiskQuota quotaWithDict(NSDictionary *dict) {
+VDiskQuota quotaWithDict(NSDictionary *dict) {
 	DCAssert(errCodeWithDict(dict)==0,@"");
-	NSDictionary *data = [dict objectForKey:kSBoxVDiskJsonLabelData];
+	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
 	DCAssert(data!=nil,@"");
-	NSString *used = [data objectForKey:kSBoxVDiskJsonLabelUsed];
+	NSString *used = [data objectForKey:kVDiskJsonLabelUsed];
 	DCAssert(used!=nil,@"");
-	NSString *total = [data objectForKey:kSBoxVDiskJsonLabelTotal];
+	NSString *total = [data objectForKey:kVDiskJsonLabelTotal];
 	DCAssert(total!=nil,@"");
-	SBoxVDiskQuota quota = SBoxVDiskQuotaMake([used longLongValue], [total longLongValue]);
+	VDiskQuota quota = VDiskQuotaMake([used longLongValue], [total longLongValue]);
 	
 	return quota;
 }
 
-- (SBoxVDRet) getQuota:(SBoxVDiskQuota *)quota {
-	SBoxVDRet retv = [self keepToken];
-	if(retv!=SBoxVDRetSuccess)
+- (VDiskRet) getQuota:(VDiskQuota *)quota {
+	VDiskRet retv = [self keepToken];
+	if(retv!=VDiskRetSuccess)
 		return retv;
 	
 	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
-							  _token, kSBoxVDiskPostLabelToken, nil];
-	NSMutableURLRequest *request = [self requestToPostWithURLString:kSBoxVDiskURLGetQuota dict:postDict];
+							  _token, kVDiskPostLabelToken, nil];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLGetQuota, postDict);
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 	NSDictionary *dict = [_jsonParser objectWithData:data];
 	
 	if(dict==nil)
-		return SBoxVDRetConnectionError;
+		return VDiskRetConnectionError;
 	
-	SBoxVDRet errCode = errCodeWithDict(dict);
+	VDiskRet errCode = errCodeWithDict(dict);
 	
-	if(errCode!=SBoxVDRetSuccess)
+	if(errCode!=VDiskRetSuccess)
 		return errCode;
 	
 	*quota = quotaWithDict(dict);
 	
-	return SBoxVDRetSuccess;
+	return VDiskRetSuccess;
 }
 
 NSInteger pageTotalWithDict(NSDictionary *dict) {
 	DCAssert(errCodeWithDict(dict)==0,@"");
-	NSDictionary *data = [dict objectForKey:kSBoxVDiskJsonLabelData];
+	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
 	DCAssert(data!=nil,@"");
-	NSDictionary *pageInfo = [data objectForKey:kSBoxVDiskJsonLabelPageInfo];
+	NSDictionary *pageInfo = [data objectForKey:kVDiskJsonLabelPageInfo];
 	DCAssert(pageInfo!=nil,@"");
-	NSNumber *pageTotal = [pageInfo objectForKey:kSBoxVDiskJsonLabelPageTotal];
+	NSNumber *pageTotal = [pageInfo objectForKey:kVDiskJsonLabelPageTotal];
 	DCAssert(pageTotal!=nil,@"");
 	
 	return [pageTotal intValue];
@@ -261,9 +260,9 @@ NSInteger pageTotalWithDict(NSDictionary *dict) {
 
 void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	DCAssert(errCodeWithDict(dict)==0,@"");
-	NSDictionary *data = [dict objectForKey:kSBoxVDiskJsonLabelData];
+	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
 	DCAssert(data!=nil,@"");
-	NSArray *list = [data objectForKey:kSBoxVDiskJsonLabelList];
+	NSArray *list = [data objectForKey:kVDiskJsonLabelList];
 	DCAssert(list!=nil,@"");
 	for(NSDictionary *item in list){
 		SBoxVDiskFileInfo *fileInfo = [SBoxVDiskFileInfo infoWithListItemDict:item];
@@ -271,25 +270,25 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	}
 }
 
-- (SBoxVDRet) _getRootFileList:(NSMutableArray *)fileList withPage:(NSInteger)page {
+- (VDiskRet) _getFileList:(NSMutableArray *)fileList withDirID:(VDiskDirID)dirID page:(NSInteger)page {
 	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
-							  _token, kSBoxVDiskPostLabelToken,
-							  [NSNumber numberWithInt:0], kSBoxVDiskPostLabelDirID,
-							  [NSNumber numberWithInt:page], kSBoxVDiskPostLabelPage,
-							  [NSNumber numberWithInt:2], kSBoxVDiskPostLabelPageSize,
-							  [NSNumber numberWithInt:_dologID], kSBoxVDiskPostLabelDologID,
+							  _token, kVDiskPostLabelToken,
+							  [NSNumber numberWithInt:dirID], kVDiskPostLabelDirID,
+							  [NSNumber numberWithInt:page], kVDiskPostLabelPage,
+							  [NSNumber numberWithInt:2], kVDiskPostLabelPageSize,
+							  [NSNumber numberWithInt:_dologID], kVDiskPostLabelDologID,
 							  nil];
-	NSMutableURLRequest *request = [self requestToPostWithURLString:kSBoxVDiskURLGetList dict:postDict];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLGetList, postDict);
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 	NSDictionary *dict = [_jsonParser objectWithData:data];
 	
 	if(dict==nil)
-		return SBoxVDRetConnectionError;
+		return VDiskRetConnectionError;
 	
-	SBoxVDRet errCode = errCodeWithDict(dict);
+	VDiskRet errCode = errCodeWithDict(dict);
 	
-	if(errCode!=SBoxVDRetSuccess)
+	if(errCode!=VDiskRetSuccess)
 		return errCode;
 	
 	addFilesToListWithDict(fileList, dict);
@@ -297,21 +296,83 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	NSInteger pageTotal = pageTotalWithDict(dict);
 	
 	if(page<pageTotal)
-		return [self _getRootFileList:fileList withPage:page+1];	//recursive add
+		return [self _getFileList:fileList withDirID:dirID page:page+1];	//recursive add
 	
-	return SBoxVDRetSuccess;
+	return VDiskRetSuccess;
 }
 
-- (SBoxVDRet) getRootFileList:(NSMutableArray *)fileList {
-	SBoxVDRet retv = [self keepToken];
-	if(retv!=SBoxVDRetSuccess)
+- (VDiskRet) getFileList:(NSMutableArray *)fileList withDirID:(VDiskDirID)dirID {
+	VDiskRet retv = [self keepToken];
+	if(retv!=VDiskRetSuccess)
 		return retv;
 	
-	return [self _getRootFileList:fileList withPage:1];
+	[fileList removeAllObjects];
+	
+	return [self _getFileList:fileList withDirID:dirID page:1];
 }
 
-- (SBoxVDRet) getFileInfo:(SBoxVDiskFileInfo*)fileInfo {
+- (VDiskRet) getRootFileList:(NSMutableArray *)fileList {
+	return [self getFileList:fileList withDirID:0];
+}
 
+- (VDiskRet) getRootFileID:(VDiskFileID *)fileID withFileName:(NSString *)fileName {
+	NSMutableArray *fileList = [NSMutableArray array];
+	VDiskRet retv = [self getRootFileList:fileList];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	*fileID = VDiskFileIDInvalid;
+	for(SBoxVDiskFileInfo *fileInfo in fileList)
+		if([[fileInfo fileName] isEqualToString:fileName])
+			*fileID = [fileInfo fileID];
+	
+	if(*fileID==VDiskFileIDInvalid)
+		return VDiskRetNoMatchingFile;
+	
+	return VDiskRetSuccess;
+}
+
+- (VDiskRet) getFileInfo:(SBoxVDiskFileInfo **)fileInfo withFileID:(VDiskFileID)fileID {//
+	VDiskRet retv = [self keepToken];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
+							  _token, kVDiskPostLabelToken,
+							  [NSNumber numberWithInteger:fileID], kVDiskPostLabelFileID,
+							  [NSNumber numberWithInteger:_dologID], kVDiskPostLabelDologID,
+							  nil];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLGetFileInfo, postDict);
+	
+	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	NSDictionary *dict = [_jsonParser objectWithData:data];
+	
+	if(dict==nil)
+		return VDiskRetConnectionError;
+	
+	VDiskRet errCode = errCodeWithDict(dict);
+	
+	if(errCode!=VDiskRetSuccess)
+		return errCode;
+	
+	NSDictionary *dataItem = [dict objectForKey:kVDiskJsonLabelData];
+	DAssert(data!=nil,@"");
+	*fileInfo = [SBoxVDiskFileInfo infoWithFileInfoDict:dataItem];
+	
+	return VDiskRetSuccess;
+}
+
+- (VDiskRet) getRootFileInfo:(SBoxVDiskFileInfo **)fileInfo withFileName:(NSString *)fileName {
+	VDiskFileID fileID = VDiskFileIDInvalid;
+	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	retv = [self getFileInfo:fileInfo withFileID:fileID];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	return VDiskRetSuccess;
 }
 
 @end

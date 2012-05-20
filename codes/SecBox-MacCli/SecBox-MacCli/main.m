@@ -18,10 +18,10 @@
 SBoxRet SBoxShowStatus() {
 	DLog("show status");
 	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
-	SBoxVDiskQuota quota;
+	VDiskQuota quota;
 	const char *quotaString = "";
-	SBoxVDRet retv = [[SBoxVDiskManager sharedManager] getQuota:&quota];
-	if(retv==SBoxVDRetSuccess){
+	VDiskRet retv = [[SBoxVDiskManager sharedManager] getQuota:&quota];
+	if(retv==VDiskRetSuccess){
 		NSString *usedString = [SBoxAlgorithms descriptionWithNumOfBytes:quota.used];
 		NSString *totalString = [SBoxAlgorithms descriptionWithNumOfBytes:quota.total];
 		NSString *string = [NSString stringWithFormat:@"\t Server Used: %@, Server Total: %@\n", usedString, totalString];
@@ -103,16 +103,23 @@ int main(int argc, const char * argv[]) {
 		
 		//SBoxCLIMain(argc, argv);
 	    
-		SBoxShowStatus();//test
+		//SBoxShowStatus();//test
 		
 		//[[SBoxVDiskManager sharedManager] getToken];//test
 		
 		//SBoxVDiskQuota quota;
 		//[[SBoxVDiskManager sharedManager] getQuota:&quota];//test
 		
-		//NSMutableArray *list = [NSMutableArray array];//test
+		//NSMutableArray *list = [NSMutableArray array]; 
 		//[[SBoxVDiskManager sharedManager] getRootFileList:list];//test
 		
+		//VDiskFileID fileID;//test
+		//[[SBoxVDiskManager sharedManager] getRootFileID:&fileID withFileName:@"showimg785.jpg"];//test
+		//SBoxVDiskFileInfo *fileInfo;//test
+		//[[SBoxVDiskManager sharedManager] getFileInfo:&fileInfo withFileID:fileID];//test
+		
+		//SBoxVDiskFileInfo *fileInfo;//test
+		//[[SBoxVDiskManager sharedManager] getRootFileInfo:&fileInfo withFileName:@"showimg785.jpg"];//test
 		
 		[SBoxConfigs save];
 	}
