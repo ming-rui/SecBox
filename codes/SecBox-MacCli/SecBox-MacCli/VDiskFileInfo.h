@@ -18,6 +18,7 @@ typedef NSInteger VDiskFileID;
 
 typedef NSInteger VDiskDirID;
 #define VDiskDirIDInvalid	-1
+#define VDiskRootDirID		0
 
 typedef long long VDiskFileSize;
 #define VDiskFileSizeInvalid	-1

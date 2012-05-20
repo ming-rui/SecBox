@@ -126,6 +126,20 @@ int main(int argc, const char * argv[]) {
 		
 		//[[SBoxVDiskManager sharedManager] removeRootFileWithFileName:@"README.txt"];//test
 		
+		//char n[10240];//test
+		//for(int i=0; i<sizeof(n)-1; i++)//test
+		//	n[i] = 't';//test
+		//n[sizeof(n)-1] = '\0';//test
+		//char d[1];//test
+		//NSData *data = [NSData dataWithBytes:d length:sizeof(d)];//test
+		//NSString *name = [NSString stringWithCString:n encoding:NSUTF8StringEncoding];//test
+		//SBoxVDiskManager *manager = [SBoxVDiskManager sharedManager];//test
+		//[manager uploadFileToRootWithFileName:name contents:data];//test
+		
+		//NSData *data = nil;//test
+		//SBoxVDiskManager *manager = [SBoxVDiskManager sharedManager];//test
+		//[manager downloadFileFromRoot:&data withFileName:@"foobar2000.exe"];//test
+		
 		[SBoxConfigs save];
 	}
 	

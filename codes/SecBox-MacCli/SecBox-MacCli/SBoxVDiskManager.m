@@ -16,6 +16,43 @@
 #import "VDiskConstants.h"
 
 
+#pragma mark -
+#pragma mark VDiskFilePack
+
+@interface VDiskFilePack : NSObject {
+	NSString *_fileName;
+	NSData *_contents;
+}
+@property(nonatomic,readonly) NSString *fileName;
+@property(nonatomic,readonly) NSData *contents;
++ (id) filePackWithName:(NSString*)name contents:(NSData*)contents;
+@end
+
+@implementation VDiskFilePack
+@synthesize fileName=_fileName;
+@synthesize contents=_contents;
+- (id) initWithName:(NSString*)name contents:(NSData*)contents {
+	self = [super init];
+	if(self){
+		_fileName = [name retain];
+		_contents = [contents retain];
+	}
+	return self;
+}
++ (id) filePackWithName:(NSString*)name contents:(NSData*)contents {
+	return [[[self alloc] initWithName:name contents:contents] autorelease];
+}
+- (void) dealloc {
+	[_fileName release];
+	[_contents release];
+	[super dealloc];
+}
+@end
+
+
+#pragma mark -
+#pragma mark SBoxVDiskManager
+
 @interface SBoxVDiskManager()
 @property(nonatomic,retain) NSString *token;
 @end
@@ -71,13 +108,21 @@ NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
 		[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		
 		if([value isKindOfClass:[NSString class]]){
-			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, value];
+			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, (NSString*)value];
+			[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		}else if([value isKindOfClass:[NSNumber class]]){
-			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, [value stringValue]];
+			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, [(NSNumber*)value stringValue]];
+			[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+		}else if([value isKindOfClass:[VDiskFilePack class]]){
+			NSString *fileName = [(VDiskFilePack*)value fileName];
+			NSData *contents = [(VDiskFilePack*)value contents];
+			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n"
+					  "Content-Type: application/octet-stream\r\n\r\n", key, fileName];
+			[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+			[data appendData:contents];
 		}else{
 			DCAssert(NO,@"");
 		}
-		[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		
 		string = @"\r\n";
 		[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
@@ -179,8 +224,13 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 }
 
 - (VDiskRet) keepToken {
-	if(_state==VDiskManagerStateOffline)
-		return [self getToken];
+	if(_state==VDiskManagerStateOffline){
+		VDiskRet retv = [self getToken];
+		if(retv!=VDiskRetSuccess)
+			return retv;
+	}
+	
+	/* keepToken的作用除了保持token，还在于更新dologID */
 	
 	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
 							  _token, kVDiskPostLabelToken,
@@ -312,7 +362,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 }
 
 - (VDiskRet) getRootFileList:(NSMutableArray *)fileList {
-	return [self getFileList:fileList withDirID:0];
+	return [self getFileList:fileList withDirID:VDiskRootDirID];
 }
 
 - (VDiskRet) getRootFileID:(VDiskFileID *)fileID withFileName:(NSString *)fileName {
@@ -410,6 +460,57 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	retv = [self removeFileWithFileID:fileID];
 	if(retv!=VDiskRetSuccess)
 		return retv;
+	
+	return VDiskRetSuccess;
+}
+
+- (VDiskRet) uploadFileWithFileName:(NSString *)fileName contents:(NSData *)contents dirID:(VDiskDirID)dirID {
+	VDiskRet retv = [self keepToken];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	VDiskFilePack *filePack = [VDiskFilePack filePackWithName:fileName contents:contents];
+	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
+							  _token, kVDiskPostLabelToken,
+							  [NSNumber numberWithInteger:dirID], kVDiskPostLabelDirID,
+							  kVDiskPostCoverFileYES, kVDiskPostLabelCoverFile,
+							  filePack, kVDiskPostLabelFile,
+							  [NSNumber numberWithInteger:_dologID], kVDiskPostLabelDologID,
+							  nil];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLUploadFile, postDict);
+	
+	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	NSDictionary *dict = [_jsonParser objectWithData:data];
+	
+	if(dict==nil)
+		return VDiskRetConnectionError;
+	
+	VDiskRet errCode = errCodeWithDict(dict);
+	
+	if(errCode!=VDiskRetSuccess)
+		return errCode;
+	
+	return VDiskRetSuccess;
+}
+
+- (VDiskRet) uploadFileToRootWithFileName:(NSString *)fileName contents:(NSData *)contents {
+	return [self uploadFileWithFileName:fileName contents:contents dirID:VDiskRootDirID];
+}
+
+- (VDiskRet) downloadFileFromRoot:(NSData **)contents withFileName:(NSString *)fileName {
+	VDiskFileInfo *fileInfo = nil;
+	VDiskRet retv = [self getRootFileInfo:&fileInfo withFileName:fileName];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	NSString *urlString = [fileInfo downloadURL];
+	DAssert(urlString!=nil,@"");
+	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	if(data==nil)
+		return VDiskRetConnectionError;
+	
+	*contents = data;
 	
 	return VDiskRetSuccess;
 }

@@ -20,6 +20,7 @@
 #define kVDiskURLGetList			@"http://openapi.vdisk.me/?m=dir&a=getlist"
 #define kVDiskURLGetFileInfo		@"http://openapi.vdisk.me/?m=file&a=get_file_info"
 #define kVDiskURLDeleteFile			@"http://openapi.vdisk.me/?m=file&a=delete_file"
+#define kVDiskURLUploadFile			@"http://openapi.vdisk.me/?m=file&a=upload_file"
 
 
 #define kVDiskPostLabelAccountType	@"app_type"
@@ -34,6 +35,12 @@
 #define kVDiskPostLabelPage			@"page"
 #define kVDiskPostLabelPageSize		@"pageSize"
 #define kVDiskPostLabelFileID		@"fid"
+#define kVDiskPostLabelCoverFile	@"cover"
+#define kVDiskPostLabelFile			@"file"
+
+
+#define kVDiskPostCoverFileYES		@"yes"
+#define kVDiskPostCoverFileNO		@"no"
 
 
 #define kVDiskJsonLabelErrCode		@"err_code"
@@ -94,22 +101,39 @@ typedef enum {
 }VDiskDeleteFileErrCode;
 
 typedef enum {
-	VDiskRetConnectionError		= -1,	//[argumented]
+	VDiskUploadFileRetInvalidCover		= 1,
+	VDiskUploadFileRetDirNotExist		= 3,
+	VDiskUploadFileRetFileNameCollision	= 4,
+	VDiskUploadFileRetSystemError		= 5,
+	VDiskUploadFileRetS3Error			= 6,
+	VDiskUploadFileRetLowCapacity		= 7,
+	VDiskUploadFileRetOverUpMaxFileSize	= 101,
+	VDiskUploadFileRetOverMaxFileSize	= 102,
+	VDiskUploadFileRetUploadNotFull		= 103,
+	VDiskUploadFileRetUploadFail		= 104,
+	VDiskUploadFileRetFormatCanNotShare	= 105,
+	VDiskUploadFileRetFileCanNotShare	= 106,
+	VDiskUploadFileRetDirFull			= 601,
+	VDiskUploadFileRetReUpload			= 721,
+}VDiskUploadFileErrCode;
+
+typedef enum {
+	VDiskRetConnectionError		= -1,	//[argumented]all
 	VDiskRetNoMatchingFile		= -2,	//[argumented]getRootFileID
-	VDiskRetInvalidCover		= 1,	//upload_file
-	VDiskRetInvalidFile			= 2,	//delete_file
-	VDiskRetInvalidDir			= 3,	//upload_file
-	VDiskRetFileLocked			= 3,	//delete_file
-	VDiskRetFileNameCollision	= 4,	//upload_file
-	VDiskRetSystemError			= 5,	//delete_file, upload_file
-	VDiskRetS3Error				= 6,	//?upload_file
-	VDiskRetLowCapacity			= 7,	//upload_file
-	VDiskRetOverUpMaxFileSize	= 101,	//upload_file
-	VDiskRetOverMaxFileSize		= 102,	//upload_file
-	VDiskRetUploadNotFull		= 103,	//upload_file
-	VDiskRetUploadFail			= 104,	//upload_file
-	VDiskRetFormatCanNotShare	= 105,	//upload_file
-	VDiskRetFileCanNotShare		= 106,	//upload_file
-	VDiskRetDirFull				= 601,	//upload_file
-	VDiskRetReUpload			= 721,	//upload_file
-}VDiskErrCode;
+}VDiskArgumentedErrCode;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

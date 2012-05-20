@@ -58,8 +58,8 @@ typedef struct {
 - (VDiskRet) getRootFileInfo:(VDiskFileInfo **)fileInfo withFileName:(NSString *)fileName;
 - (VDiskRet) removeRootFileWithFileName:(NSString *)fileName;
 
-- (VDiskRet) putFileToRootWithFileName:(NSString *)fileName data:(NSData *)data;
-- (VDiskRet) getFileFromRoot:(NSMutableData *)data withFileName:(NSString *)fileName;
+- (VDiskRet) uploadFileToRootWithFileName:(NSString *)fileName contents:(NSData *)contents;
+- (VDiskRet) downloadFileFromRoot:(NSData **)contents withFileName:(NSString *)fileName;
 
 
 ///* 下面的path是网盘上真正的path，不是程序虚拟的path */
