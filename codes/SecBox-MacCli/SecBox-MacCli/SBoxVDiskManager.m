@@ -332,7 +332,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
-- (VDiskRet) getFileInfo:(VDiskFileInfo **)fileInfo withFileID:(VDiskFileID)fileID {//
+- (VDiskRet) getFileInfo:(VDiskFileInfo **)fileInfo withFileID:(VDiskFileID)fileID {
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
 		return retv;
@@ -369,6 +369,45 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 		return retv;
 	
 	retv = [self getFileInfo:fileInfo withFileID:fileID];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	return VDiskRetSuccess;
+}
+
+- (VDiskRet) removeFileWithFileID:(VDiskFileID)fileID {
+	VDiskRet retv = [self keepToken];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
+							  _token, kVDiskPostLabelToken,
+							  [NSNumber numberWithInteger:fileID], kVDiskPostLabelFileID,
+							  [NSNumber numberWithInteger:_dologID], kVDiskPostLabelDologID,
+							  nil];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLDeleteFile, postDict);
+	
+	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	NSDictionary *dict = [_jsonParser objectWithData:data];
+	
+	if(dict==nil)
+		return VDiskRetConnectionError;
+	
+	VDiskRet errCode = errCodeWithDict(dict);
+	
+	if(errCode!=VDiskRetSuccess)
+		return errCode;
+	
+	return VDiskRetSuccess;
+}
+
+- (VDiskRet) removeRootFileWithFileName:(NSString *)fileName {
+	VDiskFileID fileID = VDiskFileIDInvalid;
+	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	retv = [self removeFileWithFileID:fileID];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	

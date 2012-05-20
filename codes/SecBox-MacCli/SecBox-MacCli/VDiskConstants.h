@@ -19,6 +19,7 @@
 #define kVDiskURLGetQuota			@"http://openapi.vdisk.me/?m=file&a=get_quota"
 #define kVDiskURLGetList			@"http://openapi.vdisk.me/?m=dir&a=getlist"
 #define kVDiskURLGetFileInfo		@"http://openapi.vdisk.me/?m=file&a=get_file_info"
+#define kVDiskURLDeleteFile			@"http://openapi.vdisk.me/?m=file&a=delete_file"
 
 
 #define kVDiskPostLabelAccountType	@"app_type"
@@ -62,3 +63,53 @@
 #define kVDiskJsonLabelDownloadURL	@"s3_url"
 
 
+typedef enum {
+	VDiskRetSuccess				= 0,	//...
+	VDiskRetOldDolog			= 602,	//...,~get_token
+	VDiskRetLackParameter		= 701,	//get_token, upload_file
+	VDiskRetInvalidToken		= 702,	//...,~get_token
+	VDiskRetExceedLimits		= 900,	//...
+	VDiskRetInvalidParameter	= 909,	//getlist, get_quota
+}VDiskCommonErrCode;
+
+typedef enum {
+	VDiskGetTokenRetInvalidSignature	= 1,
+	VDiskGetTokenRetRetInvalidAccount	= 2,
+	VDiskGetToeknRetRetInvalidTime		= 3,
+}VDiskGetTokenErrCode;
+
+typedef enum {
+	VDiskGetFileListRetDirNotExist		= 2,
+}VDiskGetFileListErrCode;
+
+typedef enum {
+	VDiskGetFileInfoRetInvalidFileIDFormat	= 1,
+	VDiskGetFileInfoRetFileNotExist		= 3,
+}VDiskGetFileInfoErrCode;
+
+typedef enum {
+	VDiskDeleteFileRetFileNotExist		= 2,
+	VDiskDeleteFileRetFileIsLocked		= 3,
+	VDiskDeleteFileRetSystemError		= 5,
+}VDiskDeleteFileErrCode;
+
+typedef enum {
+	VDiskRetConnectionError		= -1,	//[argumented]
+	VDiskRetNoMatchingFile		= -2,	//[argumented]getRootFileID
+	VDiskRetInvalidCover		= 1,	//upload_file
+	VDiskRetInvalidFile			= 2,	//delete_file
+	VDiskRetInvalidDir			= 3,	//upload_file
+	VDiskRetFileLocked			= 3,	//delete_file
+	VDiskRetFileNameCollision	= 4,	//upload_file
+	VDiskRetSystemError			= 5,	//delete_file, upload_file
+	VDiskRetS3Error				= 6,	//?upload_file
+	VDiskRetLowCapacity			= 7,	//upload_file
+	VDiskRetOverUpMaxFileSize	= 101,	//upload_file
+	VDiskRetOverMaxFileSize		= 102,	//upload_file
+	VDiskRetUploadNotFull		= 103,	//upload_file
+	VDiskRetUploadFail			= 104,	//upload_file
+	VDiskRetFormatCanNotShare	= 105,	//upload_file
+	VDiskRetFileCanNotShare		= 106,	//upload_file
+	VDiskRetDirFull				= 601,	//upload_file
+	VDiskRetReUpload			= 721,	//upload_file
+}VDiskErrCode;

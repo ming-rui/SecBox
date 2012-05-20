@@ -13,6 +13,7 @@
 #import "SBoxAlgorithms.h"
 #import "SBoxConfigs.h"
 #import "SBoxVDiskManager.h"
+#import "VDiskConstants.h"
 
 
 SBoxRet SBoxShowStatus() {
@@ -120,6 +121,10 @@ int main(int argc, const char * argv[]) {
 		
 		//SBoxVDiskFileInfo *fileInfo;//test
 		//[[SBoxVDiskManager sharedManager] getRootFileInfo:&fileInfo withFileName:@"showimg785.jpg"];//test
+		
+		//[[SBoxVDiskManager sharedManager] removeFileWithFileID:(VDiskFileID)94268189];//test
+		
+		//[[SBoxVDiskManager sharedManager] removeRootFileWithFileName:@"README.txt"];//test
 		
 		[SBoxConfigs save];
 	}

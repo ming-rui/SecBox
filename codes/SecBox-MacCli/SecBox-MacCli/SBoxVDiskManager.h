@@ -17,36 +17,6 @@ typedef enum {
 	VDiskManagerStateOnline,
 }VDiskManagerState;
 
-typedef enum {
-	VDiskRetSuccess				= SBoxSuccess,	//...
-	VDiskRetConnectionError		= -1,	//[argumented]
-	VDiskRetNoMatchingFile		= -2,	//[argumented]getRootFileID
-	VDiskRetInvalidSignature	= 1,	//get_token,
-	VDiskRetInvalidCover		= 1,	//upload_file
-	VDiskRetInvalidAccount		= 2,	//get_token,
-	VDiskRetInvalidDirID		= 2,	//getlist,
-	VDiskRetInvalidFile			= 2,	//delete_file
-	VDiskRetInvalidTime			= 3,	//get_token,
-	VDiskRetInvalidDir			= 3,	//upload_file
-	VDiskRetFileLocked			= 3,	//delete_file
-	VDiskRetFileNameCollision	= 4,	//upload_file
-	VDiskRetSystemError			= 5,	//delete_file, upload_file
-	VDiskRetS3Error				= 6,	//?upload_file
-	VDiskRetLowCapacity			= 7,	//upload_file
-	VDiskRetOverUpMaxFileSize	= 101,	//upload_file
-	VDiskRetOverMaxFileSize		= 102,	//upload_file
-	VDiskRetUploadNotFull		= 103,	//upload_file
-	VDiskRetUploadFail			= 104,	//upload_file
-	VDiskRetFormatCanNotShare	= 105,	//upload_file
-	VDiskRetFileCanNotShare		= 106,	//upload_file
-	VDiskRetDirFull				= 601,	//upload_file
-	VDiskRetOldDolog			= 602,	//...
-	VDiskRetLackParameter		= 701,	//get_token, upload_file
-	VDiskRetInvalidToken		= 702,	//...
-	VDiskRetReUpload			= 721,	//upload_file
-	VDiskRetExceedLimits		= 900,	//...
-	VDiskRetInvalidParameter	= 909,	//getlist, get_quota
-}VDiskErrCode;
 typedef int VDiskRet;
 
 typedef struct {
