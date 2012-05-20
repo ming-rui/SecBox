@@ -6,12 +6,12 @@
 //  Copyright (c) 2012 Mingrui. All rights reserved.
 //
 
-#import "SBoxVDiskFileInfo.h"
+#import "VDiskFileInfo.h"
 
-#import "SBoxVDiskConstants.h"
+#import "VDiskConstants.h"
 #import "SBoxDefines.h"
 
-@implementation SBoxVDiskFileInfo
+@implementation VDiskFileInfo
 
 @synthesize fileID=_fileID;
 @synthesize fileName=_fileName;
@@ -25,7 +25,7 @@
 @synthesize thumbnailURL=_thumbnailURL;
 @synthesize downloadURL=_downloadURL;
 
-- (id) initWithInfoType:(SBoxVDiskFileInfoType)infoType dict:(NSDictionary*)dict {
+- (id) initWithInfoType:(VDiskFileInfoType)infoType dict:(NSDictionary*)dict {
 	self = [super init];
 	if(self){
 		_infoType = infoType;
@@ -54,7 +54,7 @@
 		[self setType:[dict objectForKey:kVDiskJsonLabelType]];
 		[self setMd5:[dict objectForKey:kVDiskJsonLabelMD5]];
 		
-		if(_infoType==SBoxVDiskFileInfoTypeList){
+		if(_infoType==VDiskFileInfoTypeList){
 			NSNumber *fileSizeNum = [dict objectForKey:kVDiskJsonLabelSize_list];
 			if(fileSizeNum!=nil)
 				[self setSize:[fileSizeNum longLongValue]];
@@ -62,7 +62,7 @@
 			[self setSha1:[dict objectForKey:kVDiskJsonLabelSHA1]];
 			
 			[self setThumbnailURL:[dict objectForKey:kVDiskJsonLabelThumbnailURL]];
-		}else if(_infoType==SBoxVDiskFileInfoTypeInfo){
+		}else if(_infoType==VDiskFileInfoTypeInfo){
 			NSNumber *fileSizeNum = [dict objectForKey:kVDiskJsonLabelSize_info];
 			if(fileSizeNum!=nil)
 				[self setSize:[fileSizeNum longLongValue]];
@@ -89,12 +89,12 @@
 			_size, _type, _md5, _sha1, _thumbnailURL, _downloadURL];
 }
 
-+ (SBoxVDiskFileInfo*) infoWithListItemDict:(NSDictionary*)dict {
-	return [[[self alloc] initWithInfoType:SBoxVDiskFileInfoTypeList dict:dict] autorelease];
++ (VDiskFileInfo*) infoWithListItemDict:(NSDictionary*)dict {
+	return [[[self alloc] initWithInfoType:VDiskFileInfoTypeList dict:dict] autorelease];
 }
 
-+ (SBoxVDiskFileInfo*) infoWithFileInfoDict:(NSDictionary*)dict {
-	return [[[self alloc] initWithInfoType:SBoxVDiskFileInfoTypeInfo dict:dict] autorelease];
++ (VDiskFileInfo*) infoWithFileInfoDict:(NSDictionary*)dict {
+	return [[[self alloc] initWithInfoType:VDiskFileInfoTypeInfo dict:dict] autorelease];
 }
 
 

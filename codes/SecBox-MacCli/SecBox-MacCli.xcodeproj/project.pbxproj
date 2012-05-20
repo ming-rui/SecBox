@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4C21D3CF1567EB8100AAC149 /* SBoxVDiskFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C21D3CE1567EB8100AAC149 /* SBoxVDiskFileInfo.m */; };
+		4C21D3CF1567EB8100AAC149 /* VDiskFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C21D3CE1567EB8100AAC149 /* VDiskFileInfo.m */; };
 		4C23112015566656001C131A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C23111F15566656001C131A /* Foundation.framework */; };
 		4C23112315566656001C131A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C23112215566656001C131A /* main.m */; };
 		4C23112715566656001C131A /* SecBox_MacCli.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4C23112615566656001C131A /* SecBox_MacCli.1 */; };
@@ -41,14 +41,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4C21D3CD1567EB8100AAC149 /* SBoxVDiskFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxVDiskFileInfo.h; sourceTree = "<group>"; };
-		4C21D3CE1567EB8100AAC149 /* SBoxVDiskFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxVDiskFileInfo.m; sourceTree = "<group>"; };
+		4C21D3CD1567EB8100AAC149 /* VDiskFileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; path = VDiskFileInfo.h; sourceTree = "<group>"; };
+		4C21D3CE1567EB8100AAC149 /* VDiskFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDiskFileInfo.m; sourceTree = "<group>"; };
 		4C23111B15566656001C131A /* secbox */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = secbox; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C23111F15566656001C131A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C23112215566656001C131A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C23112515566656001C131A /* SecBox-MacCli-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SecBox-MacCli-Prefix.pch"; sourceTree = "<group>"; };
 		4C23112615566656001C131A /* SecBox_MacCli.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SecBox_MacCli.1; sourceTree = "<group>"; };
-		4C2CF7321568399D004F7BB2 /* SBoxVDiskConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxVDiskConstants.h; sourceTree = "<group>"; };
+		4C2CF7321568399D004F7BB2 /* VDiskConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; path = VDiskConstants.h; sourceTree = "<group>"; };
 		4C43EC9F1556B4D00051BACF /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		4C43ECA01556B4D00051BACF /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
 		4C43ECA11556B4D00051BACF /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
@@ -135,11 +135,11 @@
 				4CD0D7B015575F7500A2A7F7 /* SBoxConfigs.h */,
 				4CD0D7B115575F7500A2A7F7 /* SBoxConfigs.m */,
 				4CD0D7CA155839FC00A2A7F7 /* SBoxDefines.h */,
-				4C2CF7321568399D004F7BB2 /* SBoxVDiskConstants.h */,
+				4C2CF7321568399D004F7BB2 /* VDiskConstants.h */,
 				4CD0D7CF15583FC400A2A7F7 /* SBoxVDiskManager.h */,
 				4CD0D7D015583FC400A2A7F7 /* SBoxVDiskManager.m */,
-				4C21D3CD1567EB8100AAC149 /* SBoxVDiskFileInfo.h */,
-				4C21D3CE1567EB8100AAC149 /* SBoxVDiskFileInfo.m */,
+				4C21D3CD1567EB8100AAC149 /* VDiskFileInfo.h */,
+				4C21D3CE1567EB8100AAC149 /* VDiskFileInfo.m */,
 			);
 			path = "SecBox-MacCli";
 			sourceTree = "<group>";
@@ -258,7 +258,7 @@
 				4CD0D7FA15584D6200A2A7F7 /* SBJsonStreamParserState.m in Sources */,
 				4CD0D7FB15584D6200A2A7F7 /* SBJsonTokeniser.m in Sources */,
 				4CD0D7FC15584D6200A2A7F7 /* SBJsonUTF8Stream.m in Sources */,
-				4C21D3CF1567EB8100AAC149 /* SBoxVDiskFileInfo.m in Sources */,
+				4C21D3CF1567EB8100AAC149 /* VDiskFileInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

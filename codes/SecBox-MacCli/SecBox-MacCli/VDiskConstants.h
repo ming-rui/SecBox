@@ -1,5 +1,5 @@
 //
-//  SBoxVDiskConstants.h
+//  VDiskConstants.h
 //  SecBox-MacCli
 //
 //  Created by Mingrui on 5/20/12.

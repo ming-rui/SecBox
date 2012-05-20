@@ -13,7 +13,7 @@
 #import "SBoxAlgorithms.h"
 #import <CommonCrypto/CommonHMAC.h>
 #import "SBJsonParser.h"
-#import "SBoxVDiskConstants.h"
+#import "VDiskConstants.h"
 
 
 @interface SBoxVDiskManager()
@@ -265,7 +265,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	NSArray *list = [data objectForKey:kVDiskJsonLabelList];
 	DCAssert(list!=nil,@"");
 	for(NSDictionary *item in list){
-		SBoxVDiskFileInfo *fileInfo = [SBoxVDiskFileInfo infoWithListItemDict:item];
+		VDiskFileInfo *fileInfo = [VDiskFileInfo infoWithListItemDict:item];
 		[fileList addObject:fileInfo];
 	}
 }
@@ -322,7 +322,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 		return retv;
 	
 	*fileID = VDiskFileIDInvalid;
-	for(SBoxVDiskFileInfo *fileInfo in fileList)
+	for(VDiskFileInfo *fileInfo in fileList)
 		if([[fileInfo fileName] isEqualToString:fileName])
 			*fileID = [fileInfo fileID];
 	
@@ -332,7 +332,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
-- (VDiskRet) getFileInfo:(SBoxVDiskFileInfo **)fileInfo withFileID:(VDiskFileID)fileID {//
+- (VDiskRet) getFileInfo:(VDiskFileInfo **)fileInfo withFileID:(VDiskFileID)fileID {//
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
 		return retv;
@@ -357,12 +357,12 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	
 	NSDictionary *dataItem = [dict objectForKey:kVDiskJsonLabelData];
 	DAssert(data!=nil,@"");
-	*fileInfo = [SBoxVDiskFileInfo infoWithFileInfoDict:dataItem];
+	*fileInfo = [VDiskFileInfo infoWithFileInfoDict:dataItem];
 	
 	return VDiskRetSuccess;
 }
 
-- (VDiskRet) getRootFileInfo:(SBoxVDiskFileInfo **)fileInfo withFileName:(NSString *)fileName {
+- (VDiskRet) getRootFileInfo:(VDiskFileInfo **)fileInfo withFileName:(NSString *)fileName {
 	VDiskFileID fileID = VDiskFileIDInvalid;
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
 	if(retv!=VDiskRetSuccess)

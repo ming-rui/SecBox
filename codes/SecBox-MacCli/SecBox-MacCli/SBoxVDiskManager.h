@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "SecBox.h"
-#import "SBoxVDiskFileInfo.h"
+#import "VDiskFileInfo.h"
 
 typedef enum {
 	VDiskManagerStateOffline = 0,
@@ -56,7 +56,7 @@ typedef struct {
 #define VDiskQuotaMake(used,total)	((VDiskQuota){(used),(total)})
 
 @class SBJsonParser;
-@class SBoxVDiskFileInfo;
+@class VDiskFileInfo;
 
 @interface SBoxVDiskManager : NSObject {
 	@private
@@ -85,7 +85,7 @@ typedef struct {
 - (VDiskRet) getQuota:(VDiskQuota *)quota;
 - (VDiskRet) getRootFileList:(NSMutableArray *)fileList;
 
-- (VDiskRet) getRootFileInfo:(SBoxVDiskFileInfo **)fileInfo withFileName:(NSString *)fileName;
+- (VDiskRet) getRootFileInfo:(VDiskFileInfo **)fileInfo withFileName:(NSString *)fileName;
 - (VDiskRet) removeRootFileWithFileName:(NSString *)fileName;
 
 - (VDiskRet) putFileToRootWithFileName:(NSString *)fileName data:(NSData *)data;

@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-	SBoxVDiskFileInfoTypeList = 0,
-	SBoxVDiskFileInfoTypeInfo,
-}SBoxVDiskFileInfoType;
+	VDiskFileInfoTypeList = 0,
+	VDiskFileInfoTypeInfo,
+}VDiskFileInfoType;
 
 typedef NSInteger VDiskFileID;
 #define VDiskFileIDInvalid	-1
@@ -22,9 +22,9 @@ typedef NSInteger VDiskDirID;
 typedef long long VDiskFileSize;
 #define VDiskFileSizeInvalid	-1
 
-@interface SBoxVDiskFileInfo : NSObject {
+@interface VDiskFileInfo : NSObject {
 	@private
-	SBoxVDiskFileInfoType	_infoType;
+	VDiskFileInfoType	_infoType;
 	VDiskFileID _fileID;	//id
 	NSString *_fileName;	//name
 	VDiskDirID _dirID;		//dir_id
@@ -50,7 +50,7 @@ typedef long long VDiskFileSize;
 @property(nonatomic,retain) NSString *thumbnailURL;
 @property(nonatomic,retain) NSString *downloadURL;
 
-+ (SBoxVDiskFileInfo*) infoWithListItemDict:(NSDictionary*)dict;
-+ (SBoxVDiskFileInfo*) infoWithFileInfoDict:(NSDictionary*)dict;
++ (VDiskFileInfo*) infoWithListItemDict:(NSDictionary*)dict;
++ (VDiskFileInfo*) infoWithFileInfoDict:(NSDictionary*)dict;
 
 @end
