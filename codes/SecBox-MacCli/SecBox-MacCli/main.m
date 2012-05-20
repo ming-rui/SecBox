@@ -16,7 +16,7 @@
 
 
 SBoxRet SBoxShowStatus() {
-	DLog("show status");
+	DLog(@"show status");
 	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
 	VDiskQuota quota;
 	const char *quotaString = "";
@@ -43,7 +43,7 @@ SBoxRet SBoxShowStatus() {
 };
 
 SBoxRet SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, const char *password) {
-	DLog("set account info");
+	DLog(@"set account info");
 	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
 	[configs setAccountType:accountType];
 	[configs setAccountUserName:[NSString stringWithCString:userName encoding:NSUTF8StringEncoding]];
@@ -54,7 +54,7 @@ SBoxRet SBoxSetAccountInfo(SBoxAccountType accountType, const char *userName, co
 }
 
 SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password) {
-	DLog("set encryption info");
+	DLog(@"set encryption info");
 	//检测数据合法性
 	NSString *userNameString = [NSString stringWithCString:userName encoding:NSUTF8StringEncoding];
 	NSString *passwordString = [NSString stringWithCString:password encoding:NSUTF8StringEncoding];
@@ -74,31 +74,31 @@ SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password) {
 }
 
 SBoxRet SBoxListRemoteDirectory() {
-	DLog("list remote directory");
+	DLog(@"list remote directory");
 	
 	return SBoxSuccess;
 }
 
 SBoxRet SBoxChangeRemoteDirectory(const char *path) {
-	DLog("change remote directory");
+	DLog(@"change remote directory");
 	
 	return SBoxSuccess;
 }
 
 SBoxRet SBoxPutFile(const char *localSubPath, const char *remoteSubPath) {
-	DLog("put file from {%s} to {%s}", localSubPath, remoteSubPath);
+	DLog(@"put file from {%s} to {%s}", localSubPath, remoteSubPath);
 	
 	return SBoxSuccess;
 }
 
 SBoxRet SBoxGetFile(const char *remoteSubPath, const char *localSubPath) {
-	DLog("get file from {%s} to {%s}", remoteSubPath, localSubPath);
+	DLog(@"get file from {%s} to {%s}", remoteSubPath, localSubPath);
 	
 	return SBoxSuccess;
 }
 
 SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath) {
-	DLog("remove remote file {%s}",remoteSubPath);
+	DLog(@"remove remote file {%s}",remoteSubPath);
 	
 	return SBoxSuccess;
 }
@@ -120,46 +120,54 @@ int main(int argc, const char * argv[]) {
 		
 		//SBoxCLIMain(argc, argv);
 	    
+		
 		//SBoxShowStatus();//test
 		
-		//[[SBoxVDiskManager sharedManager] getToken];//test
 		
-		//SBoxVDiskQuota quota;
-		//[[SBoxVDiskManager sharedManager] getQuota:&quota];//test
-		
-		NSMutableArray *list = [NSMutableArray array];//test
 		SBoxVDiskManager *manager = [[SBoxFileSystem sharedSystem] diskManager];//test
-		[manager getRootFileList:list];//test
+		
+		
+		//[manager getToken];//test
+		
+		
+		//NSMutableArray *list = [NSMutableArray array];//test
+		//[manager getRootFileList:list];//test
+		
 		
 		//VDiskFileID fileID;//test
-		//[[SBoxVDiskManager sharedManager] getRootFileID:&fileID withFileName:@"showimg785.jpg"];//test
-		//SBoxVDiskFileInfo *fileInfo;//test
-		//[[SBoxVDiskManager sharedManager] getFileInfo:&fileInfo withFileID:fileID];//test
+		//[manager getRootFileID:&fileID withFileName:@"t"];//test
+		//VDiskItemInfo *fileInfo;//test
+		//[manager getFileInfo:&fileInfo withFileID:fileID];//test
 		
-		//SBoxVDiskFileInfo *fileInfo;//test
-		//[[SBoxVDiskManager sharedManager] getRootFileInfo:&fileInfo withFileName:@"showimg785.jpg"];//test
 		
-		//[[SBoxVDiskManager sharedManager] removeFileWithFileID:(VDiskFileID)94268189];//test
+		//VDiskItemInfo *fileInfo;//test
+		//[manager getRootFileInfo:&fileInfo withFileName:@"t"];//test
 		
-		//[[SBoxVDiskManager sharedManager] removeRootFileWithFileName:@"README.txt"];//test
 		
-		//char n[10240];//test
+		//[manager removeFileWithFileID:(VDiskFileID)94740958];//test
+		
+		
+		//[manager removeRootFileWithFileName:@"filename"];//test
+		
+		
+		//char n[1024];//test
 		//for(int i=0; i<sizeof(n)-1; i++)//test
 		//	n[i] = 't';//test
 		//n[sizeof(n)-1] = '\0';//test
 		//char d[1];//test
 		//NSData *data = [NSData dataWithBytes:d length:sizeof(d)];//test
 		//NSString *name = [NSString stringWithCString:n encoding:NSUTF8StringEncoding];//test
-		//SBoxVDiskManager *manager = [SBoxVDiskManager sharedManager];//test
 		//[manager uploadFileToRootWithFileName:name contents:data];//test
 		
+		
 		//NSData *data = nil;//test
-		//SBoxVDiskManager *manager = [SBoxVDiskManager sharedManager];//test
 		//[manager downloadFileFromRoot:&data withFileName:@"foobar2000.exe"];//test
+		
 		
 		//SBoxFileSystem *system = [SBoxFileSystem sharedSystem];//test
 		//NSString *s = [system fileNameWithPath:@"/abc/def/ghi"];//test
 		//NSString *s2 = [system pathWithFileName:s];//test
+		
 		
 		[SBoxConfigs save];
 	}

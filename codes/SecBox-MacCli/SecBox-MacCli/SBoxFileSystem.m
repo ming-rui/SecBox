@@ -137,7 +137,7 @@
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
-	for(VDiskFileInfo *fileInfo in fileList){
+	for(VDiskItemInfo *fileInfo in fileList){
 		NSString *fileName = [fileInfo name];
 		NSString *path = [self pathWithFileName:fileName];
 		if(path)
@@ -147,28 +147,45 @@
 	return SBFSRetSuccess;
 }
 
+- (BOOL) configuationInvalid {
+	return _userName==nil;
+}
+
 - (SBFSRet) update {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
+	
 	return [self _updateFilePathes];
 }
 
 - (SBFSRet) getListInCurrentDirectory:(NSMutableArray *)list {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
 	
 }
 
 - (SBFSRet) changeDirectoryWithSubPath:(NSString *)subPath {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
 	
 }
 
 - (SBFSRet) removeFileWithPath:(NSString *)path {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
 	
 }
 
 - (SBFSRet) putFileWithPath:(NSString *)path contents:(NSData *)contents {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
 	
 }
 
 - (SBFSRet) getFile:(NSData **)contents withPath:(NSString *)path {
-
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
+	
 }
 
 @end

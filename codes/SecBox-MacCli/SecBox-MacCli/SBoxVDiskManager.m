@@ -145,6 +145,7 @@ NSMutableURLRequest* requestToPostWithURLStringAndDict(NSString *urlString, NSDi
 }
 
 VDiskRet errCodeWithDict(NSDictionary *dict) {
+	DLog(@"json-dict:%@",dict);
 	DCAssert(dict!=nil,@"");
 	NSNumber *errCode = [dict objectForKey:kVDiskJsonLabelErrCode];
 	DCAssert(errCode!=nil,@"");
@@ -306,7 +307,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	NSArray *list = [data objectForKey:kVDiskJsonLabelList];
 	DCAssert(list!=nil,@"");
 	for(NSDictionary *item in list){
-		VDiskFileInfo *itemInfo = [VDiskFileInfo itemInfoWithDict:item];
+		VDiskItemInfo *itemInfo = [VDiskItemInfo itemInfoWithDict:item];
 		if([itemInfo isFile])
 			[fileList addObject:itemInfo];
 	}
@@ -364,7 +365,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 		return retv;
 	
 	*fileID = VDiskFileIDInvalid;
-	for(VDiskFileInfo *fileInfo in fileList)
+	for(VDiskItemInfo *fileInfo in fileList)
 		if([[fileInfo name] isEqualToString:fileName]){
 			*fileID = [fileInfo itemID];
 			DAssert([fileInfo isFile],@"");
@@ -377,7 +378,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
-- (VDiskRet) getFileInfo:(VDiskFileInfo **)fileInfo withFileID:(VDiskFileID)fileID {
+- (VDiskRet) getFileInfo:(VDiskItemInfo **)fileInfo withFileID:(VDiskFileID)fileID {
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
 		return retv;
@@ -402,13 +403,15 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	
 	NSDictionary *dataItem = [dict objectForKey:kVDiskJsonLabelData];
 	DAssert(dataItem!=nil,@"");
-	*fileInfo = [VDiskFileInfo itemInfoWithDict:dataItem];
-	DAssert([*fileInfo isFile],@"");
+	VDiskItemInfo *itemInfo = [VDiskItemInfo itemInfoWithDict:dataItem];
+	DAssert([itemInfo isFile],@"");
+	*fileInfo = itemInfo;
+	
 	
 	return VDiskRetSuccess;
 }
 
-- (VDiskRet) getRootFileInfo:(VDiskFileInfo **)fileInfo withFileName:(NSString *)fileName {
+- (VDiskRet) getRootFileInfo:(VDiskItemInfo **)fileInfo withFileName:(NSString *)fileName {
 	VDiskFileID fileID = VDiskFileIDInvalid;
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
@@ -494,7 +497,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 }
 
 - (VDiskRet) downloadFileFromRoot:(NSData **)contents withFileName:(NSString *)fileName {
-	VDiskFileInfo *fileInfo = nil;
+	VDiskItemInfo *fileInfo = nil;
 	VDiskRet retv = [self getRootFileInfo:&fileInfo withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;

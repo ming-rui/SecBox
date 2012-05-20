@@ -6,19 +6,21 @@
 //  Copyright (c) 2012 Mingrui. All rights reserved.
 //
 
-#import "VDiskFileInfo.h"
+#import "VDiskItemInfo.h"
 
 #import "VDiskConstants.h"
 #import "SBoxDefines.h"
 
-@implementation VDiskFileInfo
+@implementation VDiskItemInfo
 
 @synthesize itemID=_itemID;
 @synthesize name=_name;
 @synthesize creationDate=_creationDate;
 @synthesize lastModificationDate=_lastModificationDate;
+
 @dynamic isFile;
 @dynamic isDirectory;
+
 @synthesize fileSize=_fileSize;
 @synthesize fileType=_fileType;
 @synthesize fileMd5=_fileMd5;
@@ -28,11 +30,11 @@
 	self = [super init];
 	if(self){
 		if([dict objectForKey:kVDiskJsonLabelDownloadURL]){
-			_infoType = VDiskItemTypeInfoFile;
+			_type = VDiskItemTypeInfoFile;
 		}else if([dict objectForKey:kVDiskJsonLabelSHA1]){
-			_infoType = VDiskItemTypeListFile;
+			_type = VDiskItemTypeListFile;
 		}else if([dict objectForKey:kVDiskJsonLabelNumOfFiles]){
-			_infoType = VDiskItemTypeDirectory;
+			_type = VDiskItemTypeDirectory;
 		}else{
 			DAssert(NO,@"");
 		}
@@ -54,11 +56,11 @@
 		/* only for file */
 		[self setFileType:[dict objectForKey:kVDiskJsonLabelType]];
 		[self setFileMd5:[dict objectForKey:kVDiskJsonLabelMD5]];
-		if(_infoType==VDiskItemTypeListFile){
+		if(_type==VDiskItemTypeListFile){
 			NSNumber *sizeNum = [dict objectForKey:kVDiskJsonLabelSize_list];
 			if(sizeNum!=nil)
 				[self setFileSize:[sizeNum longLongValue]];
-		}else if(_infoType==VDiskItemTypeInfoFile){
+		}else if(_type==VDiskItemTypeInfoFile){
 			NSNumber *sizeNum = [dict objectForKey:kVDiskJsonLabelSize_info];
 			if(sizeNum!=nil)
 				[self setFileSize:[sizeNum longLongValue]];
@@ -73,7 +75,7 @@
 		DAssert(_lastModificationDate!=nil,@"");
 		
 		/* asserts only for file */
-		if(_infoType!=VDiskItemTypeDirectory){
+		if(_type!=VDiskItemTypeDirectory){
 			DAssert(_fileType!=nil,@"");
 			DAssert(_fileMd5!=nil,@"");
 			DAssert(_fileSize!=VDiskFileSizeInvalid,@"");
@@ -84,20 +86,20 @@
 }
 
 - (NSString *) description {
-	return [NSString stringWithFormat:@"<info %i, %@, %@, %@, %lli, %@, %@, %@>",
-			_itemID, _name, _creationDate, _lastModificationDate,
+	return [NSString stringWithFormat:@"<info %i, %i, %@, %@, %@, %lli, %@, %@, %@>",
+			_type, _itemID, _name, _creationDate, _lastModificationDate,
 			_fileSize, _fileType, _fileMd5, _fileURL];
 }
 
 - (BOOL) isFile {
-	return (_infoType!=VDiskItemTypeDirectory);
+	return (_type!=VDiskItemTypeDirectory);
 }
 
 - (BOOL) isDirectory {
-	return (_infoType==VDiskItemTypeDirectory);
+	return (_type==VDiskItemTypeDirectory);
 }
 
-+ (VDiskFileInfo*) itemInfoWithDict:(NSDictionary*)dict {
++ (VDiskItemInfo*) itemInfoWithDict:(NSDictionary*)dict {
 	return [[[self alloc] initWithDict:dict] autorelease];
 }
 

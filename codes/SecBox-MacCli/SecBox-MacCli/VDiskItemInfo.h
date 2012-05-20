@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-	VDiskItemTypeListFile = 0,
+	VDiskItemTypeDirectory	= 0,
+	VDiskItemTypeListFile,
 	VDiskItemTypeInfoFile,
-	VDiskItemTypeDirectory,
 }VDiskItemType;
 
 typedef NSInteger VDiskItemID;
@@ -27,9 +27,9 @@ typedef VDiskItemID VDiskDirID;
 typedef long long VDiskFileSize;
 #define VDiskFileSizeInvalid	-1
 
-@interface VDiskFileInfo : NSObject {
+@interface VDiskItemInfo : NSObject {
 	@private
-	VDiskItemType _infoType;
+	VDiskItemType _type;
 	
 	VDiskItemID _itemID;			//id				-file&dir
 	NSString *_name;				//name				-file&dir
@@ -49,13 +49,15 @@ typedef long long VDiskFileSize;
 @property(nonatomic,retain) NSString *name;
 @property(nonatomic,retain) NSDate *creationDate;
 @property(nonatomic,retain) NSDate *lastModificationDate;
+
 @property(nonatomic,readonly) BOOL isFile;
 @property(nonatomic,readonly) BOOL isDirectory;
+
 @property(nonatomic,assign) VDiskFileSize fileSize;
 @property(nonatomic,retain) NSString *fileType;
 @property(nonatomic,retain) NSString *fileMd5;
 @property(nonatomic,retain) NSString *fileURL;
 
-+ (VDiskFileInfo*) itemInfoWithDict:(NSDictionary*)dict;
++ (VDiskItemInfo*) itemInfoWithDict:(NSDictionary*)dict;
 
 @end

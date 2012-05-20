@@ -8,7 +8,7 @@
 
 #define GMBDEBUG
 
-//#define DLOG
+#define DLOG
 //#define SLOG
 
 #ifdef GMBDEBUG

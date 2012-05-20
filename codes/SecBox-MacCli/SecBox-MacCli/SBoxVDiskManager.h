@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "VDiskFileInfo.h"
+#import "VDiskItemInfo.h"
 
 typedef enum{
 	VDiskAccountTypeWeibo	=	0,
@@ -31,7 +31,6 @@ typedef struct {
 #define VDiskQuotaMake(used,total)	((VDiskQuota){(used),(total)})
 
 @class SBJsonParser;
-@class VDiskFileInfo;
 
 @interface SBoxVDiskManager : NSObject {
 	@private
@@ -57,7 +56,7 @@ typedef struct {
 - (VDiskRet) getQuota:(VDiskQuota *)quota;
 - (VDiskRet) getRootFileList:(NSMutableArray *)fileList;
 
-- (VDiskRet) getRootFileInfo:(VDiskFileInfo **)fileInfo withFileName:(NSString *)fileName;
+- (VDiskRet) getRootFileInfo:(VDiskItemInfo **)fileInfo withFileName:(NSString *)fileName;
 - (VDiskRet) removeRootFileWithFileName:(NSString *)fileName;
 
 - (VDiskRet) uploadFileToRootWithFileName:(NSString *)fileName contents:(NSData *)contents;

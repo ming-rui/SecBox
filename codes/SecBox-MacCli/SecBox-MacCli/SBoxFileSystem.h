@@ -12,9 +12,16 @@
 #import "SBoxVDiskManager.h"
 
 
+typedef enum{
+	/* -200 ~ -299 */
+	SBFSRetInvalidConfiguation	= -200
+}SBFSErrCode;
+
 typedef int	SBFSRet;
 #define SBFSRetSuccess 0
 
+
+//@class SBoxVDiskManager;
 
 @interface SBoxFileSystem : NSObject {
 	@private

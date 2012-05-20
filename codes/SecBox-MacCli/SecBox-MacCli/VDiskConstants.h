@@ -125,8 +125,9 @@ typedef enum {
 
 typedef enum {
 	/* -100 ~ -199 */
-	VDiskRetConnectionError		= -101,	//[argumented]all
-	VDiskRetNoMatchingFile		= -102,	//[argumented]getRootFileID
+	VDiskRetConnectionError		= -101,
+	VDiskRetNoMatchingFile		= -102,
+	VDiskRetWrongItemType		= -103,
 }VDiskArgumentedErrCode;
 
 
