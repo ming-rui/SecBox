@@ -8,8 +8,10 @@
 
 #import "VDiskItemInfo.h"
 
-#import "VDiskConstants.h"
 #import "SBoxDefines.h"
+#import "VDiskDefines.h"
+#import "VDiskConstants.h"
+
 
 @implementation VDiskItemInfo
 
@@ -36,7 +38,7 @@
 		}else if([dict objectForKey:kVDiskJsonLabelNumOfFiles]){
 			_type = VDiskItemTypeDirectory;
 		}else{
-			DAssert(NO,@"");
+			DAssert(NO);
 		}
 		_itemID = VDiskItemIDInvalid;
 		_fileSize = VDiskFileSizeInvalid;
@@ -69,16 +71,16 @@
 		}
 		
 		/* asserts for file and dir */
-		DAssert(_itemID!=VDiskItemIDInvalid,@"");
-		DAssert(_name!=nil,@"");
-		DAssert(_creationDate!=nil,@"");
-		DAssert(_lastModificationDate!=nil,@"");
+		DAssert(_itemID!=VDiskItemIDInvalid);
+		DAssert(_name!=nil);
+		DAssert(_creationDate!=nil);
+		DAssert(_lastModificationDate!=nil);
 		
 		/* asserts only for file */
 		if(_type!=VDiskItemTypeDirectory){
-			DAssert(_fileType!=nil,@"");
-			DAssert(_fileMd5!=nil,@"");
-			DAssert(_fileSize!=VDiskFileSizeInvalid,@"");
+			DAssert(_fileType!=nil);
+			DAssert(_fileMd5!=nil);
+			DAssert(_fileSize!=VDiskFileSizeInvalid);
 		}
 	}
 	

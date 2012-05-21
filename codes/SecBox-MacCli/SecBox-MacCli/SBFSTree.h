@@ -2,12 +2,26 @@
 //  SBoxFileTree.h
 //  SecBox-MacCli
 //
-//  Created by Zimmer on 5/21/12.
+//  Created by Mingrui on 5/21/12.
 //  Copyright (c) 2012 Mingrui. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface SBoxFileTree : NSObject
+#import "SBFSNode.h"
+#import "SBFSDefines.h"
+
+
+@interface SBFSTree : NSObject {
+	@private
+	SBFSNode *_root;
+}
+
+- (SBFSRet) getDirNode:(SBFSNode **)dirNode withDirPath:(NSString *)dirPath;
+- (SBFSRet) addFileNodeWithFilePath:(NSString *)filePath vDiskItemInfo:(VDiskItemInfo *)vDiskItemInfo overwrite:(BOOL)overwrite;
+- (SBFSRet) getFileNode:(SBFSNode **)fileNode withFilePath:(NSString *)filePath;
+//不需要removeNode操作，永远完全刷新
+
+- (void) removeAllData;
 
 @end

@@ -168,6 +168,12 @@ int main(int argc, const char * argv[]) {
 		//NSString *s = [system fileNameWithPath:@"/abc/def/ghi"];//test
 		//NSString *s2 = [system pathWithFileName:s];//test
 		
+		//[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/test/test" contents:[NSData dataWithBytes:"test" length:5]];
+		
+		//NSData *file = nil;
+		//[[SBoxFileSystem sharedSystem] getFile:&file withFilePath:@"/test/test/test"];
+		//char *str = [file bytes];
+		
 		
 		[SBoxConfigs save];
 	}

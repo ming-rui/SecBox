@@ -87,6 +87,10 @@
 	return [[[self alloc] initWithAccountType:accountType userName:userName password:password] autorelease];
 }
 
+- (BOOL) configurationInvalid {
+	return (_userName==nil||_password==nil);
+}
+
 NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
 	NSMutableData *data = [NSMutableData data];
 	
@@ -359,6 +363,9 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 }
 
 - (VDiskRet) getRootFileID:(VDiskFileID *)fileID withFileName:(NSString *)fileName {
+	if([fileName length]>kVDiskMaxFileNameLength)
+		return VDiskRetFileNameTooLong;
+	
 	NSMutableArray *fileList = [NSMutableArray array];
 	VDiskRet retv = [self getRootFileList:fileList];
 	if(retv!=VDiskRetSuccess)
@@ -368,7 +375,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	for(VDiskItemInfo *fileInfo in fileList)
 		if([[fileInfo name] isEqualToString:fileName]){
 			*fileID = [fileInfo itemID];
-			DAssert([fileInfo isFile],@"");
+			DAssert([fileInfo isFile]);
 			break;
 		}
 	
@@ -402,9 +409,9 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 		return errCode;
 	
 	NSDictionary *dataItem = [dict objectForKey:kVDiskJsonLabelData];
-	DAssert(dataItem!=nil,@"");
+	DAssert(dataItem!=nil);
 	VDiskItemInfo *itemInfo = [VDiskItemInfo itemInfoWithDict:dataItem];
-	DAssert([itemInfo isFile],@"");
+	DAssert([itemInfo isFile]);
 	*fileInfo = itemInfo;
 	
 	
@@ -416,6 +423,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;
+	//post condition: fileName length vaild
 	
 	retv = [self getFileInfo:fileInfo withFileID:fileID];
 	if(retv!=VDiskRetSuccess)
@@ -455,6 +463,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;
+	//post condition: fileName length vaild
 	
 	retv = [self removeFileWithFileID:fileID];
 	if(retv!=VDiskRetSuccess)
@@ -464,6 +473,9 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 }
 
 - (VDiskRet) uploadFileWithFileName:(NSString *)fileName contents:(NSData *)contents dirID:(VDiskDirID)dirID {
+	if([fileName length]>kVDiskMaxFileNameLength)
+		return VDiskRetFileNameTooLong;
+	
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
 		return retv;
@@ -501,9 +513,10 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	VDiskRet retv = [self getRootFileInfo:&fileInfo withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;
+	//post condition: fileName length vaild
 	
 	NSString *urlString = [fileInfo fileURL];
-	DAssert(urlString!=nil,@"");
+	DAssert(urlString!=nil);
 	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 	if(data==nil)

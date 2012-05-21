@@ -2,7 +2,7 @@
 //  SBoxFileSystem.h
 //  SecBox-MacCli
 //
-//  Created by Zimmer on 5/20/12.
+//  Created by Mingrui on 5/20/12.
 //  Copyright (c) 2012 Mingrui. All rights reserved.
 //
 
@@ -10,26 +10,21 @@
 
 #import "SecBox.h"
 #import "SBoxVDiskManager.h"
-
-
-typedef enum{
-	/* -200 ~ -299 */
-	SBFSRetInvalidConfiguation	= -200
-}SBFSErrCode;
-
-typedef int	SBFSRet;
-#define SBFSRetSuccess 0
+#import "SBFSDefines.h"
 
 
 //@class SBoxVDiskManager;
+@class SBFSTree;
 
 @interface SBoxFileSystem : NSObject {
 	@private
+	//remote
 	SBoxVDiskManager *_diskManager;
 	NSString *_currentPath;
 	NSString *_userName;
 	NSString *_password;
-	NSMutableArray *_filePathes;
+	SBFSTree *_fileTree;
+	//local
 }
 
 @property(nonatomic,readonly) SBoxVDiskManager* diskManager;
@@ -41,11 +36,18 @@ typedef int	SBFSRet;
 - (SBFSRet) getListInCurrentDirectory:(NSMutableArray *)list;
 - (SBFSRet) changeDirectoryWithSubPath:(NSString *)subPath;
 
-- (SBFSRet) removeFileWithPath:(NSString *)path;
+- (SBFSRet) removeFileWithFilePath:(NSString *)filePath;
 
-- (SBFSRet) putFileWithPath:(NSString *)path contents:(NSData *)contents;
-- (SBFSRet) getFile:(NSData **)contents withPath:(NSString *)path;
-
-
+- (SBFSRet) putFileWithFilePath:(NSString *)filePath contents:(NSData *)contents;
+- (SBFSRet) getFile:(NSData **)contents withFilePath:(NSString *)filePath;
 
 @end
+
+SBFSRet SBFSValidatePath(NSString *path);
+SBFSRet SBFSValidateFilePath(NSString *filePath);
+
+NSString *SBFSFileNameWithFilePath(NSString *filePath);
+NSString *SBFSDirPathWithFilePath(NSString *filePath);
+
+NSString *SBFSDirNameWithDirPath(NSString *dirPath);
+NSArray *SBFSDirNamesWithDirPath(NSString *dirPath);

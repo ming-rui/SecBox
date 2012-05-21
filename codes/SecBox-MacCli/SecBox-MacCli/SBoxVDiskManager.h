@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import "VDiskDefines.h"
 #import "VDiskItemInfo.h"
+
 
 typedef enum{
 	VDiskAccountTypeWeibo	=	0,
@@ -20,9 +22,6 @@ typedef enum {
 	VDiskManagerStateNeedUpdate,
 	VDiskManagerStateOnline,
 }VDiskManagerState;
-
-typedef int VDiskRet;
-#define	VDiskRetSuccess	0
 
 typedef struct {
 	long long used;
@@ -49,6 +48,8 @@ typedef struct {
 }
 
 + (SBoxVDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
+
+- (BOOL) configurationInvalid;
 
 - (VDiskRet) getToken;
 - (VDiskRet) keepToken;

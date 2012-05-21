@@ -12,8 +12,8 @@
 //#define SLOG
 
 #ifdef GMBDEBUG
-#	define	DAssert(...)	NSAssert(__VA_ARGS__)
-#	define	DCAssert(...)	NSCAssert(__VA_ARGS__)
+#	define	DAssert(...)	NSAssert(__VA_ARGS__,@"")
+#	define	DCAssert(...)	NSCAssert(__VA_ARGS__,@"")
 #
 #	ifdef DLOG
 #		define	DLog(...)	NSLog(__VA_ARGS__) 

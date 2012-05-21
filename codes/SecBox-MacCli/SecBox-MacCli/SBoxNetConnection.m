@@ -21,7 +21,7 @@
 		DLog(@"[NetConnection] initWithURLString:%@",urlString);
 		_delegate = delegate;
 		if(urlString==nil){
-			DAssert(NO,@"");
+			DAssert(NO);
 			[self performSelector:@selector(delayedConnectionFailedWhileIniting) withObject:nil afterDelay:0.0];
 			return self;
 		}
@@ -50,7 +50,7 @@
 		DLog(@"[NetConnection] initWithRequest:%@",request);
 		_delegate = delegate;
 		if(request==nil){
-			DAssert(NO,@"");
+			DAssert(NO);
 			[self performSelector:@selector(delayedConnectionFailedWhileIniting) withObject:nil afterDelay:0.0];
 			return self;
 		}
@@ -108,9 +108,9 @@
 
 - (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	DLog(@"[NetConnection] connectionDidReceiveResponse:%@",response);
-	//DAssert(_response==nil,@"response!=nil");
+	//DAssert(_response==nil);
 	_response = [response retain];
-	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
+	DAssert(_connectionPtr!=nil);
 	long long length = [response expectedContentLength];
 	if(length>0&&length<NSUIntegerMax){
 		_dataSize = (NSUInteger)length;
@@ -121,7 +121,7 @@
 
 - (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	//DLog(@"[NetConnection] connection:didReceiveData:");
-	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
+	DAssert(_connectionPtr!=nil);
 	if(_data==nil){
 		_data = [[NSMutableData alloc] initWithCapacity:_dataSize];
 		if(_data==nil){
@@ -140,7 +140,7 @@
 
 - (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	DLog(@"[NetConnection] connection:didFailWithError:%@",error);
-	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
+	DAssert(_connectionPtr!=nil);
 	_connectionPtr = nil;
 	[_delegate connectionFailed:self];
 	
@@ -149,7 +149,7 @@
 
 - (void) connectionDidFinishLoading:(NSURLConnection *)connection {
 	DLog(@"[NetConnection] connectionDidFinishLoading:");
-	DAssert(_connectionPtr!=nil,@"_connectionPtr==nil");
+	DAssert(_connectionPtr!=nil);
 	if(_data==nil){
 		[self connection:connection didFailWithError:nil];
 		return;
