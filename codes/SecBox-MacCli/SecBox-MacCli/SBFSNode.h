@@ -12,20 +12,20 @@
 
 
 typedef enum {
-	SBoxINodeTypeFile,
-	SBoxINodeTypeDir,
-}SBoxINodeType;
+	SBFSNodeTypeFile,
+	SBFSNodeTypeDir,
+}SBFSNodeType;
 
 @interface SBFSNode : NSObject {
 	@private
-	SBoxINodeType _type;
+	SBFSNodeType _type;
 	NSString *_name;
 	NSString *_path;
 	VDiskItemInfo *_itemInfo;
 	NSMutableDictionary *_childs;
 }
 
-@property(nonatomic,readonly) SBoxINodeType type;
+@property(nonatomic,readonly) SBFSNodeType type;
 @property(nonatomic,readonly) BOOL isDirectory;
 @property(nonatomic,readonly) BOOL isFile;
 @property(nonatomic,readonly) NSString *name;

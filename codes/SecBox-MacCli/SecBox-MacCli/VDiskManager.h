@@ -31,7 +31,7 @@ typedef struct {
 
 @class SBJsonParser;
 
-@interface SBoxVDiskManager : NSObject {
+@interface VDiskManager : NSObject {
 	@private
 	//account info
 	VDiskAccountType _accountType;
@@ -47,7 +47,7 @@ typedef struct {
 	SBJsonParser *_jsonParser;
 }
 
-+ (SBoxVDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
++ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
 
 - (BOOL) configurationInvalid;
 

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Mingrui. All rights reserved.
 //
 
-#import "SBoxVDiskManager.h"
+#import "VDiskManager.h"
 
 #import "SBoxDefines.h"
 #import "SBoxAlgorithms.h"
@@ -52,12 +52,12 @@
 #pragma mark -
 #pragma mark SBoxVDiskManager
 
-@interface SBoxVDiskManager()
+@interface VDiskManager()
 @property(nonatomic,retain) NSString *token;
 @end
 
 
-@implementation SBoxVDiskManager
+@implementation VDiskManager
 
 @synthesize token=_token;
 
@@ -83,7 +83,7 @@
 	[super dealloc];
 }
 
-+ (SBoxVDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
++ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
 	return [[[self alloc] initWithAccountType:accountType userName:userName password:password] autorelease];
 }
 

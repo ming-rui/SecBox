@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "SecBox.h"
-#import "SBoxVDiskManager.h"
+#import "VDiskManager.h"
 #import "SBFSDefines.h"
 
 
@@ -19,7 +19,7 @@
 @interface SBoxFileSystem : NSObject {
 	@private
 	//remote
-	SBoxVDiskManager *_diskManager;
+	VDiskManager *_diskManager;
 	NSString *_currentPath;
 	NSString *_userName;
 	NSString *_password;
@@ -27,7 +27,7 @@
 	//local
 }
 
-@property(nonatomic,readonly) SBoxVDiskManager* diskManager;
+@property(nonatomic,readonly) VDiskManager* diskManager;
 
 + (SBoxFileSystem *) sharedSystem;
 

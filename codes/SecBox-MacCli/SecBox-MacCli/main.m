@@ -124,7 +124,7 @@ int main(int argc, const char * argv[]) {
 		//SBoxShowStatus();//test
 		
 		
-		SBoxVDiskManager *manager = [[SBoxFileSystem sharedSystem] diskManager];//test
+		VDiskManager *manager = [[SBoxFileSystem sharedSystem] diskManager];//test
 		
 		
 		//[manager getToken];//test

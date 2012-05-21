@@ -20,7 +20,7 @@
 		4CD0D7B215575F7500A2A7F7 /* SBoxConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7B115575F7500A2A7F7 /* SBoxConfigs.m */; };
 		4CD0D7B7155767CD00A2A7F7 /* SecBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7B5155767CD00A2A7F7 /* SecBox.c */; };
 		4CD0D7C9155838FD00A2A7F7 /* SBoxNetConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7C8155838FD00A2A7F7 /* SBoxNetConnection.m */; };
-		4CD0D7D115583FC400A2A7F7 /* SBoxVDiskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7D015583FC400A2A7F7 /* SBoxVDiskManager.m */; };
+		4CD0D7D115583FC400A2A7F7 /* VDiskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7D015583FC400A2A7F7 /* VDiskManager.m */; };
 		4CD0D7F615584D6200A2A7F7 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7E915584D6200A2A7F7 /* SBJsonParser.m */; };
 		4CD0D7F715584D6200A2A7F7 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7EB15584D6200A2A7F7 /* SBJsonStreamParser.m */; };
 		4CD0D7F815584D6200A2A7F7 /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7ED15584D6200A2A7F7 /* SBJsonStreamParserAccumulator.m */; };
@@ -73,8 +73,8 @@
 		4CD0D7C7155838FD00A2A7F7 /* SBoxNetConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxNetConnection.h; sourceTree = "<group>"; };
 		4CD0D7C8155838FD00A2A7F7 /* SBoxNetConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxNetConnection.m; sourceTree = "<group>"; };
 		4CD0D7CA155839FC00A2A7F7 /* SBoxDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBoxDefines.h; sourceTree = "<group>"; };
-		4CD0D7CF15583FC400A2A7F7 /* SBoxVDiskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxVDiskManager.h; sourceTree = "<group>"; };
-		4CD0D7D015583FC400A2A7F7 /* SBoxVDiskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxVDiskManager.m; sourceTree = "<group>"; };
+		4CD0D7CF15583FC400A2A7F7 /* VDiskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; path = VDiskManager.h; sourceTree = "<group>"; };
+		4CD0D7D015583FC400A2A7F7 /* VDiskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDiskManager.m; sourceTree = "<group>"; };
 		4CD0D7E815584D6200A2A7F7 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
 		4CD0D7E915584D6200A2A7F7 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
 		4CD0D7EA15584D6200A2A7F7 /* SBJsonStreamParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParser.h; sourceTree = "<group>"; };
@@ -148,8 +148,8 @@
 				4CD0D7CA155839FC00A2A7F7 /* SBoxDefines.h */,
 				4C2CF7321568399D004F7BB2 /* VDiskDefines.h */,
 				4CC4571B156AAE7D00026F91 /* VDiskConstants.h */,
-				4CD0D7CF15583FC400A2A7F7 /* SBoxVDiskManager.h */,
-				4CD0D7D015583FC400A2A7F7 /* SBoxVDiskManager.m */,
+				4CD0D7CF15583FC400A2A7F7 /* VDiskManager.h */,
+				4CD0D7D015583FC400A2A7F7 /* VDiskManager.m */,
 				4C21D3CD1567EB8100AAC149 /* VDiskItemInfo.h */,
 				4C21D3CE1567EB8100AAC149 /* VDiskItemInfo.m */,
 				4CC4571A156AAC8100026F91 /* SBFSDefines.h */,
@@ -269,7 +269,7 @@
 				4CD0D7B215575F7500A2A7F7 /* SBoxConfigs.m in Sources */,
 				4CD0D7B7155767CD00A2A7F7 /* SecBox.c in Sources */,
 				4CD0D7C9155838FD00A2A7F7 /* SBoxNetConnection.m in Sources */,
-				4CD0D7D115583FC400A2A7F7 /* SBoxVDiskManager.m in Sources */,
+				4CD0D7D115583FC400A2A7F7 /* VDiskManager.m in Sources */,
 				4CD0D7F615584D6200A2A7F7 /* SBJsonParser.m in Sources */,
 				4CD0D7F715584D6200A2A7F7 /* SBJsonStreamParser.m in Sources */,
 				4CD0D7F815584D6200A2A7F7 /* SBJsonStreamParserAccumulator.m in Sources */,

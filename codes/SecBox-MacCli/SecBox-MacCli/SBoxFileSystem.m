@@ -21,7 +21,7 @@
 
 #pragma mark object life
 
-- (id) initWithDiskManager:(SBoxVDiskManager *)diskManager currentPath:(NSString *)currentPath userName:(NSString *)userName password:(NSString *)password {
+- (id) initWithDiskManager:(VDiskManager *)diskManager currentPath:(NSString *)currentPath userName:(NSString *)userName password:(NSString *)password {
 	self = [super init];
 	if(self){
 		_diskManager = [diskManager retain];

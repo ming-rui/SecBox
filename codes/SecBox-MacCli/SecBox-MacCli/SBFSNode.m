@@ -23,7 +23,7 @@
 - (id) initWithFilePath:(NSString *)filePath vDiskItemInfo:(VDiskItemInfo *)vDiskItemInfo {
 	self = [super init];
 	if(self){
-		_type = SBoxINodeTypeFile;
+		_type = SBFSNodeTypeFile;
 		_name = [SBFSFileNameWithFilePath(filePath) retain];
 		_path = [filePath retain];
 		_itemInfo = [vDiskItemInfo retain];
@@ -35,7 +35,7 @@
 - (id) initWithDirPath:(NSString *)dirPath {
 	self = [super init];
 	if(self){
-		_type = SBoxINodeTypeDir;
+		_type = SBFSNodeTypeDir;
 		_name = [SBFSDirNameWithDirPath(dirPath) retain];
 		_path = [dirPath retain];
 		_childs = [[NSMutableDictionary alloc] init];
@@ -66,21 +66,21 @@
 }
 
 - (BOOL) isDirectory {
-	return (_type==SBoxINodeTypeDir);
+	return (_type==SBFSNodeTypeDir);
 }
 
 - (BOOL) isFile {
-	return (_type=SBoxINodeTypeFile);
+	return (_type=SBFSNodeTypeFile);
 }
 
 - (SBFSNode *) childNodeWithName:(NSString *)name {
-	DAssert(_type==SBoxINodeTypeDir);
+	DAssert(_type==SBFSNodeTypeDir);
 	
 	return [_childs objectForKey:name];
 }
 
 - (BOOL) addChildNode:(SBFSNode *)node overwrite:(BOOL)overwrite {
-	DAssert(_type==SBoxINodeTypeDir);
+	DAssert(_type==SBFSNodeTypeDir);
 	NSString *name = [node name];
 	BOOL exist = ([_childs objectForKey:name]!=nil);
 	if((!overwrite)&&exist)
@@ -92,7 +92,7 @@
 }
 
 - (BOOL) removeChildNodeWithName:(NSString *)name {
-	DAssert(_type==SBoxINodeTypeDir);
+	DAssert(_type==SBFSNodeTypeDir);
 	BOOL exist = ([_childs objectForKey:name]!=nil);
 	[_childs removeObjectForKey:name];
 	
@@ -104,12 +104,12 @@
 }
 
 - (NSArray *) allChildNodes {
-	DAssert(_type==SBoxINodeTypeDir);
+	DAssert(_type==SBFSNodeTypeDir);
 	return [_childs allValues];
 }
 
 - (NSUInteger) numOfChildNodes {
-	DAssert(_type==SBoxINodeTypeDir);
+	DAssert(_type==SBFSNodeTypeDir);
 	return [_childs count];
 }
 
