@@ -58,7 +58,7 @@
 			SBoxAccountType accountType = [configs accountType];
 			NSString *accUserName = [configs accountUserName];
 			NSString *accPassword = [configs accountPassword];
-			SBoxVDiskManager *diskManager = [SBoxVDiskManager managerWithAccountType:accountType userName:accUserName password:accPassword];
+			VDiskManager *diskManager = [VDiskManager managerWithAccountType:accountType userName:accUserName password:accPassword];
 			
 			NSString *currentPath = [configs currentRemotePath];
 			NSString *userName = [configs encryptionUserName];
