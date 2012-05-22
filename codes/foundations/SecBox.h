@@ -6,6 +6,7 @@
 #define kAccountTypeStringWeibo		"weibo"
 #define kAccountTypeStringWeipan	"weipan"
 
+
 typedef enum {
 	SBoxAccountTypeWeibo	=	0,
 	SBoxAccountTypeWeipan	=	1,
@@ -15,7 +16,10 @@ typedef enum {
 
 typedef enum {
 	SBoxSuccess = 0,
-	SBoxFail = -1,
+	SBoxRetInvalidArgument		= -1,
+	SBoxRetInvalidInput			= -2,
+	SBoxRetLocalFileNotExist	= -3,
+	SBoxRetCantCreateLocalFile	= -4,
 }SBoxErrCode;
 typedef int SBoxRet;
 
@@ -40,9 +44,9 @@ SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password);
 SBoxRet SBoxListRemoteDirectory();
 SBoxRet SBoxChangeRemoteDirectory(const char *path);
 
-SBoxRet SBoxPutFile(const char *localSubPath, const char *remoteSubPath);
-SBoxRet SBoxGetFile(const char *remoteSubPath, const char *localSubPath);
-SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath);
+SBoxRet SBoxPutFile(const char *localPath, const char *remotePath);
+SBoxRet SBoxGetFile(const char *remotePath, const char *localPath);
+SBoxRet SBoxRemove(const char *remotePath);
 
 
 #pragma mark synchronization

@@ -15,6 +15,8 @@
 
 @interface SBoxFileSystem()
 @property(nonatomic,retain) NSString* currentPath;
+@property(nonatomic,retain) NSString* userName;
+@property(nonatomic,retain) NSString* password;
 @end
 
 
@@ -22,6 +24,8 @@
 
 @synthesize diskManager=_diskManager;
 @synthesize currentPath=_currentPath;
+@synthesize userName=_userName;
+@synthesize password=_password;
 
 
 #pragma mark object life
@@ -63,7 +67,8 @@
 			SBoxAccountType accountType = [configs accountType];
 			NSString *accUserName = [configs accountUserName];
 			NSString *accPassword = [configs accountPassword];
-			VDiskManager *diskManager = [VDiskManager managerWithAccountType:accountType userName:accUserName password:accPassword];
+			NSString *accToken = [configs accountToken];
+			VDiskManager *diskManager = [VDiskManager managerWithAccountType:accountType userName:accUserName password:accPassword token:accToken];
 			
 			NSString *currentPath = [configs currentRemotePath];
 			NSString *userName = [configs encryptionUserName];
@@ -74,6 +79,36 @@
 	}
 	
 	return _sharedSystem;
+}
+
+
+#pragma configs
+
+- (SBFSRet) setAccountInfoWithAccountType:(SBoxAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
+	[_diskManager setAccountType:accountType];
+	[_diskManager setUserName:userName];
+	[_diskManager setPassword:password];
+	
+	return SBFSRetSuccess;
+}
+
+- (SBFSRet) setEncryptionInfoWithUserName:(NSString *)userName password:(NSString *)password {
+	if([userName length]==0||[userName length]>kSBoxMaxEncUserNameLength)
+		return SBoxRetInvalidInput;
+	
+	for(int i=0; i<[userName length]; i++){
+		unichar ch = [userName characterAtIndex:i];
+		if(ch=='['||ch==']')
+			return SBoxRetInvalidInput;
+	}
+	
+	if([password length]==0)
+		return SBoxRetInvalidInput;
+	
+	[self setUserName:userName];
+	[self setPassword:password];
+	
+	return SBFSRetSuccess;
 }
 
 - (void) saveConfigs {
@@ -92,9 +127,9 @@
 
 #pragma mark file name format
 
-- (NSString *) fileNameWithPath:(NSString *)path {
+- (NSString *) physicalNameWithFilePath:(NSString *)filePath {
 	DAssert(_userName!=nil&&_password!=nil);
-	NSData *data = [path dataUsingEncoding:NSUTF8StringEncoding];
+	NSData *data = [filePath dataUsingEncoding:NSUTF8StringEncoding];
 	NSData *encryptedData = [SBoxAlgorithms encryptWithData:data key:_password];
 	NSString *encodedString = [SBoxAlgorithms base64wsEncodeWithData:encryptedData];
 	NSString *string = [NSString stringWithFormat:@"[SecBox][%@][%@]", _userName, encodedString];
@@ -102,27 +137,28 @@
 	return string;
 }
 
-- (BOOL) _getUserName:(NSString **)userName string:(NSString **)string withFileName:(NSString *)fileName {
-	if(![fileName hasPrefix:@"[SecBox]["])
+- (BOOL) _getUserName:(NSString **)userName string:(NSString **)string withPhysicalName:(NSString *)physicalName {
+	if(![physicalName hasPrefix:@"[SecBox]["])
 		return NO;
 	
 	NSMutableString *userNameBuffer = [NSMutableString string];
 	NSMutableString *stringBuffer = [NSMutableString string];
 	
 	int i;
+	int length = [physicalName length];
 	unichar ch = 0;
-	for(i=9; i<[fileName length]; i++){
-		ch = [fileName characterAtIndex:i];
+	for(i=9; i<length; i++){
+		ch = [physicalName characterAtIndex:i];
 		if(ch!=']')
 			[userNameBuffer appendFormat:@"%C",ch];
 		else
 			break;
 	}
 	++i;
-	if(i>=[fileName length]||[fileName characterAtIndex:i]!='[')
+	if(i>=length||[physicalName characterAtIndex:i]!='[')
 		return NO;
-	for(++i; i<[fileName length]; i++){
-		ch = [fileName characterAtIndex:i];
+	for(++i; i<length; i++){
+		ch = [physicalName characterAtIndex:i];
 		if(ch!=']')
 			[stringBuffer appendFormat:@"%C",ch];
 		else
@@ -130,7 +166,7 @@
 	}
 	if([userNameBuffer length]==0||[stringBuffer length]==0)
 		return NO;
-	if(!(ch==']'&&i==[fileName length]-1))
+	if(!(ch==']'&&i==length-1))
 		return NO;
 	
 	*userName = userNameBuffer;
@@ -139,11 +175,11 @@
 	return YES;
 }
 
-- (NSString *) pathWithFileName:(NSString *)fileName {
+- (NSString *) pathWithPhysicalName:(NSString *)physicalName {
 	DAssert(_userName!=nil&&_password!=nil);
 	NSString *userName = nil;
 	NSString *string = nil;
-	if(![self _getUserName:&userName string:&string withFileName:fileName])
+	if(![self _getUserName:&userName string:&string withPhysicalName:physicalName])
 		return nil;
 	if(![userName isEqualToString:_userName])
 		return nil;
@@ -164,8 +200,8 @@
 		return retv;
 	
 	for(VDiskItemInfo *fileInfo in fileList){
-		NSString *fileName = [fileInfo name];
-		NSString *path = [self pathWithFileName:fileName];
+		NSString *physicalFileName = [fileInfo name];
+		NSString *path = [self pathWithPhysicalName:physicalFileName];
 		if(path)
 			[_fileTree addFileNodeWithFilePath:path vDiskItemInfo:fileInfo overwrite:NO];
 	}
@@ -205,7 +241,7 @@
 		return retv;
 	
 	SBFSNode *dirNode;
-	retv = [_fileTree getDirNode:&dirNode withDirPath:_currentPath];
+	retv = [_fileTree getDirNode:&dirNode withDirPath:_currentPath createDir:YES];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -221,6 +257,10 @@
 		return SBFSRetInvalidConfiguation;
 	
 	path = [self pathWithPath:path];
+	SBFSRet retv = SBFSValidatePath(path);
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
 	[self setCurrentPath:path];
 	
 	return SBFSRetSuccess;
@@ -230,6 +270,17 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
+	filePath = [self pathWithPath:filePath];
+	SBFSRet retv = SBFSValidateFilePath(filePath);
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	NSString *fileName = [self physicalNameWithFilePath:filePath];
+	retv = [_diskManager removeRootFileWithFileName:fileName];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	return SBFSRetSuccess;
 }
 
 - (SBFSRet) putFileWithFilePath:(NSString *)filePath contents:(NSData *)contents {
@@ -237,21 +288,16 @@
 		return SBFSRetInvalidConfiguation;
 	
 	NSString *path = [self pathWithPath:filePath];
-	
 	SBFSRet retv = SBFSValidateFilePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	NSString *fileName = [self fileNameWithPath:path];
+	NSString *fileName = [self physicalNameWithFilePath:path];
 	NSData *encryptedContents = [SBoxAlgorithms encryptWithData:contents key:_password];
 	if(encryptedContents==nil)
 		return SBFSRetEncrytionError;
 	
 	retv = [_diskManager uploadFileToRootWithFileName:fileName contents:encryptedContents];
-	if(retv!=SBFSRetSuccess)
-		return retv;
-	
-	retv = [self update];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -268,7 +314,7 @@
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	NSString *fileName = [self fileNameWithPath:path];
+	NSString *fileName = [self physicalNameWithFilePath:path];
 	NSData *encryptedContents;
 	retv = [_diskManager downloadFileFromRoot:&encryptedContents withFileName:fileName];
 	if(retv!=SBFSRetSuccess)
@@ -328,12 +374,12 @@ NSString *SBFSDirNameWithDirPath(NSString *dirPath) {
 	return dirName;
 }
 
-NSArray *SBFSDirNamesWithDirPath(NSString *dirPath) {
-	DCAssert(SBFSValidatePath(dirPath)==SBFSRetSuccess);
+NSArray *SBFSNamesWithPath(NSString *path) {
+	DCAssert(SBFSValidatePath(path)==SBFSRetSuccess);
 	
-	NSArray *dirNames = [dirPath pathComponents];
-	DCAssert(dirNames!=nil);
+	NSArray *names = [path pathComponents];
+	DCAssert(names!=nil);
 	
-	return dirNames;
+	return names;
 }
 

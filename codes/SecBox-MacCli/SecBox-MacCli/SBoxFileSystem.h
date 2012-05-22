@@ -29,7 +29,11 @@
 
 + (SBoxFileSystem *) sharedSystem;
 
+- (NSString *) userName;
 - (NSString *) currentPath;
+
+- (SBFSRet) setAccountInfoWithAccountType:(SBoxAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
+- (SBFSRet) setEncryptionInfoWithUserName:(NSString *)userName password:(NSString *)password;
 - (void) saveConfigs;
 
 - (SBFSRet) update;
@@ -51,4 +55,4 @@ NSString *SBFSFileNameWithFilePath(NSString *filePath);
 NSString *SBFSDirPathWithFilePath(NSString *filePath);
 
 NSString *SBFSDirNameWithDirPath(NSString *dirPath);
-NSArray *SBFSDirNamesWithDirPath(NSString *dirPath);
+NSArray *SBFSNamesWithPath(NSString *path);

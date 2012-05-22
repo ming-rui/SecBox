@@ -50,8 +50,9 @@ typedef struct {
 @property(nonatomic,assign) VDiskAccountType accountType;
 @property(nonatomic,retain) NSString* userName;
 @property(nonatomic,retain) NSString* password;
+@property(nonatomic,retain) NSString* token;
 
-+ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
++ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token;
 
 - (BOOL) configurationInvalid;
 

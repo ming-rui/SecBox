@@ -12,10 +12,11 @@ typedef enum{
 	SBFSRetPathTooLong			= -210,
 	SBFSRetInvalidPath			= -211,
 	SBFSRetInvalidFilePath		= -212,
-	SBFSRetFileInfoNotExist		= -213,
+	SBFSRetNodeNotExist			= -213,
 	SBFSRetFileInPath			= -214,
-	SBFSRetIsNotFile			= -215,
-	SBFSRetNodeNameCollision	= -216,
+	SBFSRetNodeIsNotFile		= -215,
+	SBFSRetNodeIsNotDir			= -216,
+	SBFSRetNodeNameCollision	= -217,
 	SBFSRetEncrytionError		= -220,
 	SBFSRetDecrytionError		= -221,
 }SBFSErrCode;
@@ -23,7 +24,8 @@ typedef enum{
 typedef int	SBFSRet;
 #define SBFSRetSuccess 0
 
-#define kSBoxMaxPathLength	255	/* ==kVDiskMaxFileNameLength */
+#define kSBoxMaxPathLength			170	/* (kVDiskMaxFileNameLength-12-userNameLength)*3/4 */
+#define kSBoxMaxEncUserNameLength	15
 
 
 

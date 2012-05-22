@@ -16,6 +16,7 @@
 	SBoxAccountType _accountType;
 	NSString *_accountUserName;
 	NSString *_accountPassword;
+	NSString *_accountToken;
 	NSString *_currentRemotePath;
 	
 	//local
@@ -26,6 +27,7 @@
 @property(nonatomic,assign) SBoxAccountType accountType;
 @property(nonatomic,retain) NSString *accountUserName;
 @property(nonatomic,retain) NSString *accountPassword;
+@property(nonatomic,retain) NSString *accountToken;
 @property(nonatomic,retain) NSString *currentRemotePath;
 
 @property(nonatomic,retain) NSString *encryptionUserName;

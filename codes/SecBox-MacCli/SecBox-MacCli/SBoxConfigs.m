@@ -13,6 +13,7 @@
 @synthesize accountType = _accountType;
 @synthesize accountUserName = _accountUserName;
 @synthesize accountPassword = _accountPassword;
+@synthesize accountToken = _accountToken;
 @synthesize currentRemotePath = _currentRemotePath;
 
 @synthesize encryptionUserName = _encryptionUserName;
@@ -49,6 +50,17 @@
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (void) dealloc {
+	[_accountUserName release];
+	[_accountPassword release];
+	[_accountToken release];
+	[_currentRemotePath release];
+	[_encryptionUserName release];
+	[_encryptionPassword release];
+	
+	[super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark NSCoding
@@ -56,6 +68,7 @@
 #define kAccountTypeKey			@"accType"
 #define kAccountUserNameKey		@"accUserName"
 #define kAccountPasswordKey		@"accPass"
+#define kAccountTokenKey		@"accToken"
 #define kCurrentRemotePathKey	@"currRemotePath"
 #define kEncryptionUserNameKey	@"encUserName"
 #define kEncryptionPasswordKey	@"encPass"
@@ -66,6 +79,7 @@
         _accountType = [coder decodeIntForKey:kAccountTypeKey];
 		_accountUserName = [[coder decodeObjectForKey:kAccountUserNameKey] retain];
 		_accountPassword = [[coder decodeObjectForKey:kAccountPasswordKey] retain];
+		_accountToken = [[coder decodeObjectForKey:kAccountTokenKey] retain];
 		_currentRemotePath = [[coder decodeObjectForKey:kCurrentRemotePathKey] retain];
 		
 		_encryptionUserName = [[coder decodeObjectForKey:kEncryptionUserNameKey] retain];
@@ -79,6 +93,7 @@
 	[coder encodeInt:_accountType forKey:kAccountTypeKey];
 	[coder encodeObject:_accountUserName forKey:kAccountUserNameKey];
 	[coder encodeObject:_accountPassword forKey:kAccountPasswordKey];
+	[coder encodeObject:_accountToken forKey:kAccountTokenKey];
 	[coder encodeObject:_currentRemotePath forKey:kCurrentRemotePathKey];
 	
 	[coder encodeObject:_encryptionUserName forKey:kEncryptionUserNameKey];

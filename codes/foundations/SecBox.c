@@ -13,6 +13,7 @@
 #define kCmdCStringChangeRemoteDirectory	"cd"
 #define kCmdCStringPutFile					"put"
 #define kCmdCStringGetFile					"get"
+#define kCmdCStringRemove					"rm"
 
 
 #pragma mark input suppliemnts
@@ -41,7 +42,7 @@ char* getString(char *string, int size, char secret, char *prompt) {
 SBoxRet invalidInput() {
 	printf("invalid input!\n");
 	
-	return SBoxFail;
+	return SBoxRetInvalidInput;
 }
 
 
@@ -53,7 +54,7 @@ SBoxRet inputAccountType(SBoxAccountType *accountType) {
 	char *retv = getString(inputString, sizeof(inputString), 0, prompt);
 	
 	if(retv==NULL)
-		return SBoxFail;
+		return SBoxRetInvalidInput;
 	
 	if(strcmp(inputString, kAccountTypeStringWeibo)==0){
 		*accountType = SBoxAccountTypeWeibo;
@@ -70,7 +71,7 @@ SBoxRet inputAccountUserName(char *userName, int size) {
 	char *retv = getString(userName, size, 0, "Set Account User Name:");
 	
 	if(retv==NULL)
-		return SBoxFail;
+		return SBoxRetInvalidInput;
 	
 	if(retv[0]=='\0')
 		return invalidInput();
@@ -82,7 +83,7 @@ SBoxRet inputAccountPassword(char *password, int size) {
 	char *retv = getString(password, size, 1, "Set Account Password:");
 	
 	if(retv==NULL)
-		return SBoxFail;
+		return SBoxRetInvalidInput;
 	
 	if(retv[0]=='\0')
 		return invalidInput();
@@ -95,13 +96,19 @@ SBoxRet inputAccountInfo() {
 	char password[40];
 	SBoxAccountType accountType;
 	
-	if(inputAccountType(&accountType)!=SBoxSuccess)
-		return SBoxFail;
-	if(inputAccountUserName(userName, sizeof(userName))!=SBoxSuccess)
-		return SBoxFail;
-	if(inputAccountPassword(password, sizeof(password))!=SBoxSuccess)
-		return SBoxFail;
-	SBoxRet retv = SBoxSetAccountInfo(accountType, userName, password);
+	SBoxRet retv = inputAccountType(&accountType);
+	if(retv!=SBoxSuccess)
+		return retv;
+	
+	retv = inputAccountUserName(userName, sizeof(userName));
+	if(retv!=SBoxSuccess)
+		return retv;
+	
+	retv = inputAccountPassword(password, sizeof(password));
+	if(retv!=SBoxSuccess)
+		return retv;
+	
+	retv = SBoxSetAccountInfo(accountType, userName, password);
 	
 	return retv;
 }
@@ -113,7 +120,7 @@ SBoxRet inputEncryptionUserName(char *userName, int size) {
 	char *retv = getString(userName, size, 0, "Set Encryption User Name:");
 	
 	if(retv==NULL)
-		return SBoxFail;
+		return SBoxRetInvalidInput;
 	
 	if(retv[0]=='\0')
 		return invalidInput();
@@ -125,7 +132,7 @@ SBoxRet inputEncryptionPassword(char *password, int size) {
 	char *retv = getString(password, size, 1, "Set Encryption Password:");
 	
 	if(retv==NULL)
-		return SBoxFail;
+		return SBoxRetInvalidInput;
 	
 	if(retv[0]=='\0')
 		return invalidInput();
@@ -137,11 +144,15 @@ SBoxRet inputEncryptionInfo() {
 	char userName[40];
 	char password[40];
 	
-	if(inputEncryptionUserName(userName, sizeof(userName))!=SBoxSuccess)
-		return SBoxFail;
-	if(inputEncryptionPassword(password, sizeof(password))!=SBoxSuccess)
-		return SBoxFail;
-	SBoxRet retv = SBoxSetEncryptionInfo(userName, password);
+	SBoxRet retv = inputEncryptionUserName(userName, sizeof(userName));
+	if(retv!=SBoxSuccess)
+		return retv;
+	
+	retv = inputEncryptionPassword(password, sizeof(password));
+	if(retv!=SBoxSuccess)
+		return retv;
+	
+	retv = SBoxSetEncryptionInfo(userName, password);
 	
 	return retv;
 }
@@ -150,16 +161,16 @@ SBoxRet inputEncryptionInfo() {
 #pragma mark show help
 
 SBoxRet SBoxShowHelp() {
-	printf("\nExamples:\n"
+	printf("Examples:\n"
 		   "\t%s %s : show help \n"
 		   "\t%s %s : show status \n"
 		   "\t%s %s : set vdisk account \n"
 		   "\t%s %s : set encryption\n"
 		   "\t%s %s : list current remote directory \n"
 		   "\t%s %s <path> : change current remote directory \n"
-		   "\t%s %s <local path> <remote path> : put local file(s) to remote\n"
-		   "\t%s %s <remote path> <local path> : get remote file(s) to local\n"
-		   "\n",
+		   "\t%s %s <local path> <remote path> : put local file to remote\n"
+		   "\t%s %s <remote path> <local path> : get remote file to local\n"
+		   "\t%s %s <remote path> : remove remote file\n",
 		   kSBoxExecutableName, kCmdCStringHelp,
 		   kSBoxExecutableName, kCmdCStringShowStatus,
 		   kSBoxExecutableName, kCmdCStringSetAccount, 
@@ -167,7 +178,8 @@ SBoxRet SBoxShowHelp() {
 		   kSBoxExecutableName, kCmdCStringListRemoteDirectory,
 		   kSBoxExecutableName, kCmdCStringChangeRemoteDirectory,
 		   kSBoxExecutableName, kCmdCStringPutFile,
-		   kSBoxExecutableName, kCmdCStringGetFile
+		   kSBoxExecutableName, kCmdCStringGetFile,
+		   kSBoxExecutableName, kCmdCStringRemove
 		   );
 	
 	return SBoxSuccess;
@@ -177,15 +189,13 @@ SBoxRet SBoxShowHelp() {
 #pragma mark CLIMain
 
 SBoxRet invalidArguments() {
-	printf("\nWrong Arguments!\n");
+	printf("Wrong Arguments!\n");
 	SBoxShowHelp();
 	
-	return SBoxFail;
+	return SBoxRetInvalidArgument;
 }
 
 SBoxRet SBoxCLIMain(int argc, const char *argv[]) {
-	
-	//inputAccountInfo();//test
 	
 	if(argc<2)
 		return invalidArguments();
@@ -215,6 +225,9 @@ SBoxRet SBoxCLIMain(int argc, const char *argv[]) {
 	}else if(strcmp(cmdString, kCmdCStringGetFile)==0&&argc==4){
 		//get remote file to local file path
 		return SBoxGetFile(argv[2], argv[3]);
+	}else if(strcmp(cmdString, kCmdCStringRemove)==0&&argc==3){
+		//remove remote file
+		return SBoxRemove(argv[2]);
 	}
 	
 	return invalidArguments();

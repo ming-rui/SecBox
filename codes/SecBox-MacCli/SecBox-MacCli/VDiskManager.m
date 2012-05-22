@@ -52,24 +52,24 @@
 #pragma mark -
 #pragma mark SBoxVDiskManager
 
-@interface VDiskManager()
-@property(nonatomic,retain) NSString *token;
-@end
-
 
 @implementation VDiskManager
 
-@synthesize token=_token;
 @synthesize accountType=_accountType;
 @synthesize userName=_userName;
 @synthesize password=_password;
+@synthesize token=_token;
 
-- (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
+- (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token {
 	self = [super init];
 	if(self){
 		_accountType = accountType;
 		_userName = [userName retain];
 		_password = [password retain];
+		if(token){
+			_state = VDiskManagerStateOnline;
+			_token = [token retain];
+		}
 		
 		_jsonParser = [[SBJsonParser alloc] init];
 	}
@@ -86,8 +86,8 @@
 	[super dealloc];
 }
 
-+ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
-	return [[[self alloc] initWithAccountType:accountType userName:userName password:password] autorelease];
++ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token {
+	return [[[self alloc] initWithAccountType:accountType userName:userName password:password token:token] autorelease];
 }
 
 - (BOOL) configurationInvalid {
