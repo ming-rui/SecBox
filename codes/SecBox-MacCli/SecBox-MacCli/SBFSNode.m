@@ -70,7 +70,7 @@
 }
 
 - (BOOL) isFile {
-	return (_type=SBFSNodeTypeFile);
+	return (_type==SBFSNodeTypeFile);
 }
 
 - (SBFSNode *) childNodeWithName:(NSString *)name {
@@ -111,6 +111,10 @@
 - (NSUInteger) numOfChildNodes {
 	DAssert(_type==SBFSNodeTypeDir);
 	return [_childs count];
+}
+
+- (NSComparisonResult) compare:(SBFSNode *)node {
+	return [_name compare:[node name]];
 }
 
 

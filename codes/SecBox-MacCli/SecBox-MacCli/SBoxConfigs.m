@@ -23,9 +23,8 @@
 
 #define kSBoxConfigsKey			@"SBoxConfigs"
 
-static SBoxConfigs *_configs = nil;
-
 + (SBoxConfigs *) sharedConfigs {
+	static SBoxConfigs *_configs = nil;
 	@synchronized(self) {
 		if(_configs==nil){
 			NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:kSBoxConfigsKey];
@@ -44,10 +43,8 @@ static SBoxConfigs *_configs = nil;
 	return _configs;
 }
 
-+ (void) save {
-	if(_configs==nil)
-		return;
-	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_configs];
+- (void) save {
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
 	[[NSUserDefaults standardUserDefaults] setObject:data forKey:kSBoxConfigsKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }

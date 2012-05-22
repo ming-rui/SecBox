@@ -60,6 +60,9 @@
 @implementation VDiskManager
 
 @synthesize token=_token;
+@synthesize accountType=_accountType;
+@synthesize userName=_userName;
+@synthesize password=_password;
 
 - (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password {
 	self = [super init];

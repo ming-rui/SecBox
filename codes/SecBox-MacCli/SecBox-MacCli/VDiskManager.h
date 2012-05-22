@@ -47,6 +47,10 @@ typedef struct {
 	SBJsonParser *_jsonParser;
 }
 
+@property(nonatomic,assign) VDiskAccountType accountType;
+@property(nonatomic,retain) NSString* userName;
+@property(nonatomic,retain) NSString* password;
+
 + (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password;
 
 - (BOOL) configurationInvalid;

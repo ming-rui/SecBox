@@ -42,7 +42,7 @@ BOOL hasFile(SBFSNode *dirNode){
 	for(SBFSNode *node in nodes){
 		if([node isFile])
 			return YES;
-		if([node isDirectory]&&hasFile(node))
+		if(hasFile(node))
 			return YES;
 	}
 	

@@ -76,13 +76,36 @@ SBoxRet SBoxSetEncryptionInfo(const char *userName, const char *password) {
 SBoxRet SBoxListRemoteDirectory() {
 	DLog(@"list remote directory");
 	
+	SBoxFileSystem *system = [SBoxFileSystem sharedSystem];
+	NSArray *nodes;
+	SBoxRet retv = [system getNodesInCurrentDirectory:&nodes sort:YES];
+	if(retv!=SBoxSuccess)
+		return retv;
+	
+	printf("%lu items in \"%s\":\n", [nodes count], [[system currentPath] cStringUsingEncoding:NSUTF8StringEncoding]);
+	
+	for(SBFSNode *node in nodes){
+		BOOL isFile = [node isFile];
+		const char *type = isFile?"":"<DIR>";
+		const char *fileID = isFile?[[NSString stringWithFormat:@"%i", [[node itemInfo] itemID]] cStringUsingEncoding:NSUTF8StringEncoding]:"--\t";
+		NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+		[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+		NSString *lmDateString = [dateFormatter stringFromDate:[[node itemInfo] lastModificationDate]];
+		const char *lmDate = isFile?[lmDateString cStringUsingEncoding:NSUTF8StringEncoding]:"--\t\t";
+		const char *name = [[node name] cStringUsingEncoding:NSUTF8StringEncoding];
+		printf("%s	%s	%s	%s\n", type, fileID, lmDate, name);
+	}
+	
 	return SBoxSuccess;
 }
 
 SBoxRet SBoxChangeRemoteDirectory(const char *path) {
 	DLog(@"change remote directory");
 	
-	return SBoxSuccess;
+	NSString *pathString = [NSString stringWithCString:path encoding:NSUTF8StringEncoding];
+	SBoxRet retv = [[SBoxFileSystem sharedSystem] changeDirectoryWithPath:pathString];
+	
+	return retv;
 }
 
 SBoxRet SBoxPutFile(const char *localSubPath, const char *remoteSubPath) {
@@ -104,6 +127,7 @@ SBoxRet SBoxRemoveRemoteFile(const char *remoteSubPath) {
 }
 
 int main(int argc, const char * argv[]) {
+	SBoxRet retv;
 	@autoreleasepool {
 	    
 //		NSString *s = [SBoxAlgorithms base64wsEncodeWithData:[NSData dataWithBytes:"abcdefgh" length:19]];
@@ -118,13 +142,12 @@ int main(int argc, const char * argv[]) {
 //	    NSLog(@"hello:%@",s);
 		
 		
-		//SBoxCLIMain(argc, argv);
-	    
+		retv = SBoxCLIMain(argc, argv);
 		
 		//SBoxShowStatus();//test
 		
 		
-		VDiskManager *manager = [[SBoxFileSystem sharedSystem] diskManager];//test
+		//VDiskManager *manager = [[SBoxFileSystem sharedSystem] diskManager];//test
 		
 		
 		//[manager getToken];//test
@@ -168,16 +191,31 @@ int main(int argc, const char * argv[]) {
 		//NSString *s = [system fileNameWithPath:@"/abc/def/ghi"];//test
 		//NSString *s2 = [system pathWithFileName:s];//test
 		
-		//[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/test/test" contents:[NSData dataWithBytes:"test" length:5]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/test/test" contents:[NSData dataWithBytes:"test" length:5]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/file1" contents:[NSData dataWithBytes:"file1" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/file2" contents:[NSData dataWithBytes:"file2" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/file3" contents:[NSData dataWithBytes:"file3" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/file4" contents:[NSData dataWithBytes:"file4" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/file5" contents:[NSData dataWithBytes:"file5" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/file1" contents:[NSData dataWithBytes:"file1" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/file2" contents:[NSData dataWithBytes:"file2" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/file3" contents:[NSData dataWithBytes:"file3" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/test/file1" contents:[NSData dataWithBytes:"file1" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/test/file2" contents:[NSData dataWithBytes:"file2" length:6]];
+//		[[SBoxFileSystem sharedSystem] putFileWithFilePath:@"/test/test/file3" contents:[NSData dataWithBytes:"file3" length:6]];
 		
 		//NSData *file = nil;
 		//[[SBoxFileSystem sharedSystem] getFile:&file withFilePath:@"/test/test/test"];
 		//char *str = [file bytes];
 		
+		//NSString *s = [@"/a/../../" stringByStandardizingPath];
 		
-		[SBoxConfigs save];
+		//SBoxListRemoteDirectory();
+		
+		
+		[[SBoxFileSystem sharedSystem] saveConfigs];
 	}
 	
-    return 0;
+    return retv;
 }
 

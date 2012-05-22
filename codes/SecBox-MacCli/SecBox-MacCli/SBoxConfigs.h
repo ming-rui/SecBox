@@ -32,6 +32,6 @@
 @property(nonatomic,retain) NSString *encryptionPassword;
 
 + (SBoxConfigs *) sharedConfigs;
-+ (void) save;
+- (void) save;
 
 @end

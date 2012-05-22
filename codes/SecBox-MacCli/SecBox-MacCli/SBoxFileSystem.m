@@ -11,12 +11,17 @@
 #import "SBoxDefines.h"
 #import "SBoxConfigs.h"
 #import "SBoxAlgorithms.h"
-#import "SBFSTree.h"
+
+
+@interface SBoxFileSystem()
+@property(nonatomic,retain) NSString* currentPath;
+@end
 
 
 @implementation SBoxFileSystem
 
 @synthesize diskManager=_diskManager;
+@synthesize currentPath=_currentPath;
 
 
 #pragma mark object life
@@ -71,6 +76,19 @@
 	return _sharedSystem;
 }
 
+- (void) saveConfigs {
+	SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
+	
+	[configs setAccountType:[_diskManager accountType]];
+	[configs setAccountUserName:[_diskManager userName]];
+	[configs setAccountPassword:[_diskManager password]];
+	
+	[configs setCurrentRemotePath:_currentPath];
+	[configs setEncryptionUserName:_userName];
+	[configs setEncryptionPassword:_password];
+	
+	[configs save];
+}
 
 #pragma mark file name format
 
@@ -169,16 +187,43 @@
 	return [self _updateFileTree];
 }
 
-- (SBFSRet) getListInCurrentDirectory:(NSMutableArray *)list {
-	if([self configuationInvalid])
-		return SBFSRetInvalidConfiguation;
+- (NSString *) pathWithPath:(NSString *)path {
+	if(![path hasPrefix:@"/"]){
+		path = [NSString stringWithFormat:@"%@/%@", _currentPath, path];
+	}
+	path = [path stringByStandardizingPath];
 	
+	return path;
 }
 
-- (SBFSRet) changeDirectoryWithSubPath:(NSString *)subPath {
+- (SBFSRet) getNodesInCurrentDirectory:(NSArray **)nodes sort:(BOOL)sort{
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
+	SBFSRet retv = [self update];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	SBFSNode *dirNode;
+	retv = [_fileTree getDirNode:&dirNode withDirPath:_currentPath];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	*nodes = [dirNode allChildNodes];
+	if(sort)
+		*nodes = [*nodes sortedArrayUsingSelector:@selector(compare:)];
+	
+	return SBFSRetSuccess;
+}
+
+- (SBFSRet) changeDirectoryWithPath:(NSString *)path {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
+	
+	path = [self pathWithPath:path];
+	[self setCurrentPath:path];
+	
+	return SBFSRetSuccess;
 }
 
 - (SBFSRet) removeFileWithFilePath:(NSString *)filePath {
@@ -191,11 +236,13 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	SBFSRet retv = SBFSValidateFilePath(filePath);
+	NSString *path = [self pathWithPath:filePath];
+	
+	SBFSRet retv = SBFSValidateFilePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	NSString *fileName = [self fileNameWithPath:filePath];
+	NSString *fileName = [self fileNameWithPath:path];
 	NSData *encryptedContents = [SBoxAlgorithms encryptWithData:contents key:_password];
 	if(encryptedContents==nil)
 		return SBFSRetEncrytionError;
@@ -215,11 +262,13 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	SBFSRet retv = SBFSValidateFilePath(filePath);
+	NSString *path = [self pathWithPath:filePath];
+	
+	SBFSRet retv = SBFSValidateFilePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	NSString *fileName = [self fileNameWithPath:filePath];
+	NSString *fileName = [self fileNameWithPath:path];
 	NSData *encryptedContents;
 	retv = [_diskManager downloadFileFromRoot:&encryptedContents withFileName:fileName];
 	if(retv!=SBFSRetSuccess)

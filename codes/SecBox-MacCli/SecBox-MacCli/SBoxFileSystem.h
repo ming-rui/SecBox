@@ -11,10 +11,8 @@
 #import "SecBox.h"
 #import "VDiskManager.h"
 #import "SBFSDefines.h"
+#import "SBFSTree.h"
 
-
-//@class SBoxVDiskManager;
-@class SBFSTree;
 
 @interface SBoxFileSystem : NSObject {
 	@private
@@ -31,10 +29,13 @@
 
 + (SBoxFileSystem *) sharedSystem;
 
+- (NSString *) currentPath;
+- (void) saveConfigs;
+
 - (SBFSRet) update;
 
-- (SBFSRet) getListInCurrentDirectory:(NSMutableArray *)list;
-- (SBFSRet) changeDirectoryWithSubPath:(NSString *)subPath;
+- (SBFSRet) getNodesInCurrentDirectory:(NSArray **)nodes sort:(BOOL)sort;
+- (SBFSRet) changeDirectoryWithPath:(NSString *)path;
 
 - (SBFSRet) removeFileWithFilePath:(NSString *)filePath;
 

@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SBFSNode.h"
 #import "SBFSDefines.h"
+#import "SBFSNode.h"
 
 
 @interface SBFSTree : NSObject {
