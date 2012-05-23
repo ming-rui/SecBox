@@ -60,6 +60,9 @@
 @synthesize password=_password;
 @synthesize token=_token;
 
+
+#pragma mark object life cycle
+
 - (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token {
 	self = [super init];
 	if(self){
@@ -90,9 +93,15 @@
 	return [[[self alloc] initWithAccountType:accountType userName:userName password:password token:token] autorelease];
 }
 
+
+#pragma mark short methods
+
 - (BOOL) configurationInvalid {
 	return (_userName==nil||_password==nil);
 }
+
+
+#pragma mark URLConnection helper functions
 
 NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
 	NSMutableData *data = [NSMutableData data];
@@ -150,6 +159,9 @@ NSMutableURLRequest* requestToPostWithURLStringAndDict(NSString *urlString, NSDi
 	
 	return request;
 }
+
+
+#pragma mark getToken
 
 VDiskRet errCodeWithDict(NSDictionary *dict) {
 	DLog(@"json-dict:%@",dict);
@@ -214,6 +226,9 @@ NSString* tokenWithDict(NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+
+#pragma mark keepToken
+
 NSInteger dologIDWithDict(NSDictionary *dict) {
 	DCAssert(dict!=nil,@"");
 	NSNumber *dologID = [dict objectForKey:kVDiskJsonLabelDologID];
@@ -257,6 +272,9 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+
+#pragma mark getQuota
+
 VDiskQuota quotaWithDict(NSDictionary *dict) {
 	DCAssert(errCodeWithDict(dict)==0,@"");
 	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
@@ -270,6 +288,7 @@ VDiskQuota quotaWithDict(NSDictionary *dict) {
 	return quota;
 }
 
+/* post condition: token is kept */
 - (VDiskRet) getQuota:(VDiskQuota *)quota {
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
@@ -294,6 +313,9 @@ VDiskQuota quotaWithDict(NSDictionary *dict) {
 	
 	return VDiskRetSuccess;
 }
+
+
+#pragma mark getFileList
 
 NSInteger pageTotalWithDict(NSDictionary *dict) {
 	DCAssert(errCodeWithDict(dict)==0,@"");
@@ -351,6 +373,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+/* post condition: token is kept */
 - (VDiskRet) getFileList:(NSMutableArray *)fileList withDirID:(VDiskDirID)dirID {
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
@@ -361,16 +384,34 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return [self _getFileList:fileList withDirID:dirID page:1];
 }
 
+/* post condition: token is kept */
 - (VDiskRet) getRootFileList:(NSMutableArray *)fileList {
 	return [self getFileList:fileList withDirID:VDiskRootDirID];
 }
 
-- (VDiskRet) getRootFileID:(VDiskFileID *)fileID withFileName:(NSString *)fileName {
+
+#pragma mark getFileInfo
+
+VDiskRet validateFileName(NSString *fileName) {
+	/* 只做简单的检测，其他的靠服务器返回错误 */
+	
+	if([fileName length]==0)
+		return VDiskRetInvalidFileName;
+	
 	if([fileName length]>kVDiskMaxFileNameLength)
 		return VDiskRetFileNameTooLong;
 	
+	return VDiskRetSuccess;
+}
+
+/* post condition: fileName is valid, token is kept */
+- (VDiskRet) getRootFileID:(VDiskFileID *)fileID withFileName:(NSString *)fileName {
+	VDiskRet retv = validateFileName(fileName);
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
 	NSMutableArray *fileList = [NSMutableArray array];
-	VDiskRet retv = [self getRootFileList:fileList];
+	retv = [self getRootFileList:fileList];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -388,6 +429,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+/* post condition: token is kept */
 - (VDiskRet) getFileInfo:(VDiskItemInfo **)fileInfo withFileID:(VDiskFileID)fileID {
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
@@ -421,6 +463,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+/* post condition: fileName is valid, token is keeped */
 - (VDiskRet) getRootFileInfo:(VDiskItemInfo **)fileInfo withFileName:(NSString *)fileName {
 	VDiskFileID fileID = VDiskFileIDInvalid;
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
@@ -435,6 +478,10 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+
+#pragma mark removeFile
+
+/* post condition: token is kept */
 - (VDiskRet) removeFileWithFileID:(VDiskFileID)fileID {
 	VDiskRet retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
@@ -461,12 +508,12 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+/* post condition: fileName is valid, token is kept */
 - (VDiskRet) removeRootFileWithFileName:(NSString *)fileName {
 	VDiskFileID fileID = VDiskFileIDInvalid;
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;
-	//post condition: fileName length vaild
 	
 	retv = [self removeFileWithFileID:fileID];
 	if(retv!=VDiskRetSuccess)
@@ -475,11 +522,64 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
-- (VDiskRet) uploadFileWithFileName:(NSString *)fileName contents:(NSData *)contents dirID:(VDiskDirID)dirID {
-	if([fileName length]>kVDiskMaxFileNameLength)
-		return VDiskRetFileNameTooLong;
-	
+
+#pragma mark renameFile
+
+/* post condition: token is kept */
+- (VDiskRet) renameFileWithFileID:(VDiskFileID)fileID newFileName:(NSString *)newFileName {
 	VDiskRet retv = [self keepToken];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
+							  _token, kVDiskPostLabelToken,
+							  [NSNumber numberWithInteger:fileID], kVDiskPostLabelFileID,
+							  newFileName, kVDiskPostLabelNewFileName,
+							  [NSNumber numberWithInteger:_dologID], kVDiskPostLabelDologID,
+							  nil];
+	NSMutableURLRequest *request = requestToPostWithURLStringAndDict(kVDiskURLRenameFile, postDict);
+	
+	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	NSDictionary *dict = [_jsonParser objectWithData:data];
+	
+	if(dict==nil)
+		return VDiskRetConnectionError;
+	
+	VDiskRet errCode = errCodeWithDict(dict);
+	
+	if(errCode!=VDiskRetSuccess)
+		return errCode;
+	
+	return VDiskRetSuccess;
+}
+
+/* post condition: fileName is valid, token is kept */
+- (VDiskRet) renameRootFileWithOldFileName:(NSString *)oldFileName newFileName:(NSString *)newFileName {
+	VDiskFileID fileID = VDiskFileIDInvalid;
+	VDiskRet retv = [self getRootFileID:&fileID withFileName:oldFileName];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	retv = [self renameFileWithFileID:fileID newFileName:newFileName];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	return VDiskRetSuccess;
+}
+
+
+#pragma mark uploadFile
+
+/* post condition: fileName is valid, contents is not nil, token is kept */
+- (VDiskRet) uploadFileWithFileName:(NSString *)fileName contents:(NSData *)contents dirID:(VDiskDirID)dirID {
+	VDiskRet retv = validateFileName(fileName);
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	if(contents==nil)
+		return VDiskRetInvalidFileContents;
+	
+	retv = [self keepToken];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -507,16 +607,20 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	return VDiskRetSuccess;
 }
 
+/* post condition: fileName is valid, contents is not nil, token is kept */
 - (VDiskRet) uploadFileToRootWithFileName:(NSString *)fileName contents:(NSData *)contents {
 	return [self uploadFileWithFileName:fileName contents:contents dirID:VDiskRootDirID];
 }
 
+
+#pragma mark downloadFile
+
+/* post condition: fileName is valid, contents is not nil, token is kept */
 - (VDiskRet) downloadFileFromRoot:(NSData **)contents withFileName:(NSString *)fileName {
 	VDiskItemInfo *fileInfo = nil;
 	VDiskRet retv = [self getRootFileInfo:&fileInfo withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;
-	//post condition: fileName length vaild
 	
 	NSString *urlString = [fileInfo fileURL];
 	DAssert(urlString!=nil);

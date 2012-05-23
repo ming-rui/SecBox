@@ -64,6 +64,7 @@ typedef struct {
 
 - (VDiskRet) getRootFileInfo:(VDiskItemInfo **)fileInfo withFileName:(NSString *)fileName;
 - (VDiskRet) removeRootFileWithFileName:(NSString *)fileName;
+- (VDiskRet) renameRootFileWithOldFileName:(NSString *)oldFileName newFileName:(NSString *)newFileName;
 
 - (VDiskRet) uploadFileToRootWithFileName:(NSString *)fileName contents:(NSData *)contents;
 - (VDiskRet) downloadFileFromRoot:(NSData **)contents withFileName:(NSString *)fileName;

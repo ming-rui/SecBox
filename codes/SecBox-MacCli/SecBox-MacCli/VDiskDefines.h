@@ -57,11 +57,22 @@ typedef enum {
 }VDiskUploadFileErrCode;
 
 typedef enum {
+	VDiskRenameFileRetInvalidFid		= 1,
+	VDiskRenameFileRetInvalidFileName	= 2,
+	VDiskRenameFileRetFileNotExist		= 3,
+	VDiskRenameFileRetSystemError		= 5,
+	VDiskRenameFileRetFileNameCollision	= 6,
+	VDiskRenameFileRetDirFull			= 601,
+}VDiskRenameFileErrCode;
+
+typedef enum {
 	/* -100 ~ -199 */
-	VDiskRetConnectionError		= -101,
-	VDiskRetNoMatchingFile		= -102,
-	VDiskRetWrongItemType		= -103,
-	VDiskRetFileNameTooLong		= -104,
+	VDiskRetConnectionError		= -100,
+	VDiskRetNoMatchingFile		= -101,
+	VDiskRetWrongItemType		= -102,
+	VDiskRetFileNameTooLong		= -103,
+	VDiskRetInvalidFileName		= -104,
+	VDiskRetInvalidFileContents	= -105,
 }VDiskArgumentedErrCode;
 
 

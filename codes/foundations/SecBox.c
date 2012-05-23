@@ -14,6 +14,7 @@
 #define kCmdCStringPutFile					"put"
 #define kCmdCStringGetFile					"get"
 #define kCmdCStringRemove					"rm"
+#define kCmdCStringMove						"mv"
 
 
 #pragma mark input suppliemnts
@@ -170,7 +171,8 @@ SBoxRet SBoxShowHelp() {
 		   "\t%s %s <path> : change current remote directory \n"
 		   "\t%s %s <local path> <remote path> : put local file to remote\n"
 		   "\t%s %s <remote path> <local path> : get remote file to local\n"
-		   "\t%s %s <remote path> : remove remote file\n",
+		   "\t%s %s <remote path> : remove remote file\n"
+		   "\t%s %s <remote path 1> <remote path 2> : move remote file\n",
 		   kSBoxExecutableName, kCmdCStringHelp,
 		   kSBoxExecutableName, kCmdCStringShowStatus,
 		   kSBoxExecutableName, kCmdCStringSetAccount, 
@@ -179,7 +181,8 @@ SBoxRet SBoxShowHelp() {
 		   kSBoxExecutableName, kCmdCStringChangeRemoteDirectory,
 		   kSBoxExecutableName, kCmdCStringPutFile,
 		   kSBoxExecutableName, kCmdCStringGetFile,
-		   kSBoxExecutableName, kCmdCStringRemove
+		   kSBoxExecutableName, kCmdCStringRemove,
+		   kSBoxExecutableName, kCmdCStringMove
 		   );
 	
 	return SBoxSuccess;
@@ -228,6 +231,9 @@ SBoxRet SBoxCLIMain(int argc, const char *argv[]) {
 	}else if(strcmp(cmdString, kCmdCStringRemove)==0&&argc==3){
 		//remove remote file
 		return SBoxRemove(argv[2]);
+	}else if(strcmp(cmdString, kCmdCStringMove)==0&&argc==4){
+		//move remote file
+		return SBoxMove(argv[2], argv[3]);
 	}
 	
 	return invalidArguments();

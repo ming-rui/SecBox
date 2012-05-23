@@ -26,6 +26,7 @@
 #define kVDiskURLGetFileInfo		@"http://openapi.vdisk.me/?m=file&a=get_file_info"
 #define kVDiskURLDeleteFile			@"http://openapi.vdisk.me/?m=file&a=delete_file"
 #define kVDiskURLUploadFile			@"http://openapi.vdisk.me/?m=file&a=upload_file"
+#define kVDiskURLRenameFile			@"http://openapi.vdisk.me/?m=file&a=rename_file"
 
 
 #define kVDiskPostLabelAccountType	@"app_type"
@@ -42,6 +43,7 @@
 #define kVDiskPostLabelFileID		@"fid"
 #define kVDiskPostLabelCoverFile	@"cover"
 #define kVDiskPostLabelFile			@"file"
+#define kVDiskPostLabelNewFileName	@"new_name"
 
 
 #define kVDiskPostCoverFileYES		@"yes"

@@ -47,6 +47,7 @@ SBoxRet SBoxChangeRemoteDirectory(const char *path);
 SBoxRet SBoxPutFile(const char *localPath, const char *remotePath);
 SBoxRet SBoxGetFile(const char *remotePath, const char *localPath);
 SBoxRet SBoxRemove(const char *remotePath);
+SBoxRet SBoxMove(const char *remotePath1, const char *remotePath2);
 
 
 #pragma mark synchronization

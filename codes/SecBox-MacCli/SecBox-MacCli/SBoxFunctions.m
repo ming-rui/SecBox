@@ -28,9 +28,9 @@ SBoxRet SBoxShowStatus() {
 		quotaString = "Server status unavailable.";
 	}
 	printf("Status:\n"
-		   "\t Account Type: %s, User Name: %s;\n"
-		   "\t Encryption User Name: %s;\n"
-		   "\t %s\n",
+		   " Account Type: %s, User Name: %s;\n"
+		   " Encryption User Name: %s;\n"
+		   " %s\n",
 		   SBoxAccountTypeString([diskManager accountType]),
 		   [[diskManager userName] cStringUsingEncoding:NSUTF8StringEncoding],
 		   [[system userName] cStringUsingEncoding:NSUTF8StringEncoding],
@@ -169,6 +169,20 @@ SBoxRet SBoxRemove(const char *remotePath) {
 		return retv;
 	
 	return SBoxSuccess;
+}
+
+SBoxRet SBoxMove(const char *remotePath1, const char *remotePath2) {
+	DLog(@"move remote file from {%s} to {%s}", remotePath1, remotePath2);
+	
+	NSString *oldPath = [NSString stringWithCString:remotePath1 encoding:NSUTF8StringEncoding];
+	NSString *newPath = [NSString stringWithCString:remotePath2 encoding:NSUTF8StringEncoding];
+	SBoxFileSystem *system = [SBoxFileSystem sharedSystem];
+	SBFSRet retv = [system moveFileWithOldFilePath:oldPath newFilePath:newPath];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	return SBoxSuccess;
+	
 }
 
 

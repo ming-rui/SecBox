@@ -283,6 +283,30 @@
 	return SBFSRetSuccess;
 }
 
+- (SBFSRet) moveFileWithOldFilePath:(NSString *)oldFilePath newFilePath:(NSString *)newFilePath {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
+	
+	oldFilePath = [self pathWithPath:oldFilePath];
+	SBFSRet retv = SBFSValidateFilePath(oldFilePath);
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	newFilePath = [self pathWithPath:newFilePath];
+	retv = SBFSValidateFilePath(newFilePath);
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	NSString *oldFileName = [self physicalNameWithFilePath:oldFilePath];
+	NSString *newFileName = [self physicalNameWithFilePath:newFilePath];
+	
+	retv = [_diskManager renameRootFileWithOldFileName:oldFileName newFileName:newFileName];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	return SBFSRetSuccess;
+}
+
 - (SBFSRet) putFileWithFilePath:(NSString *)filePath contents:(NSData *)contents {
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;

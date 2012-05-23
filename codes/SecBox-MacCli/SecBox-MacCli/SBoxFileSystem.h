@@ -42,6 +42,7 @@
 - (SBFSRet) changeDirectoryWithPath:(NSString *)path;
 
 - (SBFSRet) removeFileWithFilePath:(NSString *)filePath;
+- (SBFSRet) moveFileWithOldFilePath:(NSString *)oldFilePath newFilePath:(NSString *)newFilePath;
 
 - (SBFSRet) putFileWithFilePath:(NSString *)filePath contents:(NSData *)contents;
 - (SBFSRet) getFile:(NSData **)contents withFilePath:(NSString *)filePath;
