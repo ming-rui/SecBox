@@ -73,7 +73,7 @@ NSString *dirPathWithDirNames(NSArray *dirNames, int start, int end) {
 }
 
 - (SBFSRet) getNode:(SBFSNode **)node withPath:(NSString *)path createDir:(BOOL)createDir {
-	SBFSRet retv = SBFSValidatePath(path);
+	SBFSRet retv = SBFSValidateAbsolutePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -103,12 +103,8 @@ NSString *dirPathWithDirNames(NSArray *dirNames, int start, int end) {
 }
 
 - (SBFSRet) getDirNode:(SBFSNode **)dirNode withDirPath:(NSString *)dirPath createDir:(BOOL)createDir {
-	SBFSRet retv = SBFSValidatePath(dirPath);
-	if(retv!=SBFSRetSuccess)
-		return retv;
-	
 	SBFSNode *node = nil;
-	retv = [self getNode:&node withPath:dirPath createDir:createDir];
+	SBFSRet retv = [self getNode:&node withPath:dirPath createDir:createDir];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -121,7 +117,7 @@ NSString *dirPathWithDirNames(NSArray *dirNames, int start, int end) {
 }
 
 - (SBFSRet) addFileNodeWithFilePath:(NSString *)filePath vDiskItemInfo:(VDiskItemInfo *)vDiskItemInfo overwrite:(BOOL)overwrite {
-	SBFSRet retv = SBFSValidateFilePath(filePath);
+	SBFSRet retv = SBFSValidateAbsoluteFilePath(filePath);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -140,12 +136,8 @@ NSString *dirPathWithDirNames(NSArray *dirNames, int start, int end) {
 }
 
 - (SBFSRet) getFileNode:(SBFSNode **)fileNode withFilePath:(NSString *)filePath {
-	SBFSRet retv = SBFSValidateFilePath(filePath);
-	if(retv!=SBFSRetSuccess)
-		return retv;
-	
 	SBFSNode *node;
-	retv = [self getNode:&node withPath:filePath createDir:NO];
+	SBFSRet retv = [self getNode:&node withPath:filePath createDir:NO];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	

@@ -16,13 +16,11 @@
 
 @interface SBoxFileSystem : NSObject {
 	@private
-	//remote
 	VDiskManager *_diskManager;
 	NSString *_currentPath;
 	NSString *_userName;
 	NSString *_password;
 	SBFSTree *_fileTree;
-	//local
 }
 
 @property(nonatomic,readonly) VDiskManager* diskManager;
@@ -36,7 +34,12 @@
 - (SBFSRet) setEncryptionInfoWithUserName:(NSString *)userName password:(NSString *)password;
 - (void) saveConfigs;
 
+- (NSString *) absolutePathWithPath:(NSString *)path;
+- (NSString *) fileMd5InRemoteWithContents:(NSData *)contents;
+
 - (SBFSRet) update;
+
+- (SBFSRet) getFileNode:(SBFSNode **)fileNode withFilePath:(NSString *)filePath;
 
 - (SBFSRet) getNodesInCurrentDirectory:(NSArray **)nodes sort:(BOOL)sort;
 - (SBFSRet) changeDirectoryWithPath:(NSString *)path;
@@ -49,8 +52,8 @@
 
 @end
 
-SBFSRet SBFSValidatePath(NSString *path);
-SBFSRet SBFSValidateFilePath(NSString *filePath);
+SBFSRet SBFSValidateAbsolutePath(NSString *path);
+SBFSRet SBFSValidateAbsoluteFilePath(NSString *filePath);
 
 NSString *SBFSFileNameWithFilePath(NSString *filePath);
 NSString *SBFSDirPathWithFilePath(NSString *filePath);

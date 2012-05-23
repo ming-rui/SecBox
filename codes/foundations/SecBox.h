@@ -52,11 +52,9 @@ SBoxRet SBoxMove(const char *remotePath1, const char *remotePath2);
 
 #pragma mark synchronization
 
-//SBoxRet SBoxSetLocalRoot(const char *path);
-//SBoxRet SBoxSetRemoteRoot(const char *path);
-//
-//SBoxRet SBoxPush();
-//SBoxRet SBoxPull();
+SBoxRet SBoxAddMap(const char *localPath, const char *remotePath);
+SBoxRet SBoxRemoveMap(const char *localPath);
+SBoxRet SBoxSync();
 
 
 

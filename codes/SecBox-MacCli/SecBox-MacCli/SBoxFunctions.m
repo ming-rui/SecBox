@@ -10,10 +10,13 @@
 #import "SBoxDefines.h"
 #import "SBoxAlgorithms.h"
 #import "SBoxFileSystem.h"
+#import "SBoxUtils.h"
+#import "SBoxSyncSystem.h"
 
 
 SBoxRet SBoxShowStatus() {
 	DLog(@"show status");
+	/* show configs & server status */
 	SBoxFileSystem *system = [SBoxFileSystem sharedSystem];
 	VDiskManager *diskManager = [system diskManager];
 	VDiskQuota quota;
@@ -36,6 +39,16 @@ SBoxRet SBoxShowStatus() {
 		   [[system userName] cStringUsingEncoding:NSUTF8StringEncoding],
 		   quotaString
 		   );
+	/* show maps */
+	SBoxSyncSystem *syncSystem = [SBoxSyncSystem sharedSystem];
+	NSArray *pairs = [syncSystem allPairs];
+	printf("%lu map records for syncronization:\n", [pairs count]);
+	for(int i=0; i<[pairs count]; i++){
+		SBSSPair *pair = [pairs objectAtIndex:i];
+		printf(" <%s, %s>\n",
+			   [[pair localPath] cStringUsingEncoding:NSUTF8StringEncoding],
+			   [[pair remotePath] cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
 	
 	return SBoxSuccess;
 };
@@ -105,25 +118,11 @@ SBoxRet SBoxChangeRemoteDirectory(const char *path) {
 	return SBoxSuccess;
 }
 
-NSString* absoluteLocalPath(const char *path) {
-	NSString *pathString = nil;
-	if(path[0]=='/'){
-		pathString = [NSString stringWithFormat:@"%s", path];
-	}else{
-		NSString *currentPath = [[NSFileManager defaultManager] currentDirectoryPath];
-		pathString = [NSString stringWithFormat:@"%@/%s", currentPath, path];
-	}
-	pathString = [pathString stringByStandardizingPath];
-	
-	DLog(@"absolutePath:%@",pathString);
-	
-	return pathString;
-}
-
 SBoxRet SBoxPutFile(const char *localPath, const char *remotePath) {
 	DLog(@"put file from {%s} to {%s}", localPath, remotePath);
 	
-	NSString *localPathString = absoluteLocalPath(localPath);
+	NSString *localPathString = [NSString stringWithCString:localPath encoding:NSUTF8StringEncoding];
+	localPathString = SBoxAbsoluteLocalPathWithPath(localPathString);
 	NSString *remotePathString = [NSString stringWithCString:remotePath encoding:NSUTF8StringEncoding];
 	
 	SBoxFileSystem *system = [SBoxFileSystem sharedSystem];
@@ -142,7 +141,8 @@ SBoxRet SBoxPutFile(const char *localPath, const char *remotePath) {
 SBoxRet SBoxGetFile(const char *remotePath, const char *localPath) {
 	DLog(@"get file from {%s} to {%s}", remotePath, localPath);
 	
-	NSString *localPathString = absoluteLocalPath(localPath);
+	NSString *localPathString = [NSString stringWithCString:localPath encoding:NSUTF8StringEncoding];
+	localPathString = SBoxAbsoluteLocalPathWithPath(localPathString);
 	NSString *remotePathString = [NSString stringWithCString:remotePath encoding:NSUTF8StringEncoding];
 	
 	SBoxFileSystem *system = [SBoxFileSystem sharedSystem];
@@ -183,6 +183,61 @@ SBoxRet SBoxMove(const char *remotePath1, const char *remotePath2) {
 	
 	return SBoxSuccess;
 	
+}
+
+SBoxRet SBoxAddMap(const char *localPath, const char *remotePath) {
+	NSString *localPathString = [NSString stringWithCString:localPath encoding:NSUTF8StringEncoding];
+	NSString *remotePathString = [NSString stringWithCString:remotePath encoding:NSUTF8StringEncoding];
+	SBoxSyncSystem *system = [SBoxSyncSystem sharedSystem];
+	SBFSRet retv = [system addMapWithLocalFilePath:localPathString remoteFilePath:remotePathString];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	return SBoxSuccess;
+}
+
+SBoxRet SBoxRemoveMap(const char *localPath) {
+	NSString *localPathString = [NSString stringWithCString:localPath encoding:NSUTF8StringEncoding];
+	SBoxSyncSystem *system = [SBoxSyncSystem sharedSystem];
+	SBFSRet retv = [system removeMapWithLocalFilePath:localPathString];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	return SBoxSuccess;
+}
+
+SBoxRet SBoxSync() {
+	SBoxSyncSystem *system = [SBoxSyncSystem sharedSystem];
+	[system initSync];
+	//SBSSSyncAction nextAction = SBSSSyncActionReportCollision;
+	while([system stillCanSync]){
+		SBSSSyncResult result;
+		SBSSPair *pair;
+		SBSSRet retv = [system syncOneWithAction:SBSSSyncActionForceUpload andGetResult:&result pair:&pair];
+		if(retv!=SBSSRetSuccess)
+			return retv;
+		
+		const char *localPath = [[pair localPath] cStringUsingEncoding:NSUTF8StringEncoding];
+		switch(result){
+			case SBSSSyncUploaded:
+				printf("File \"%s\" is uploaded.\n",localPath);
+				break;
+			case SBSSSyncDownloaded:
+				printf("File \"%s\" is downloaded.\n",localPath);
+				break;
+			case SBSSSyncSame:
+				printf("File \"%s\" is ok.\n",localPath);
+				break;
+			case SBSSSyncFilesDoNotExist:
+				printf("File \"%s\" and its online counterpart neither exist.\n",localPath);
+				break;
+			case SBSSSyncConflicted:
+				printf("File \"%s\" conflicts the online version.\n",localPath);
+				break;
+		}
+	}
+	
+	return SBoxSuccess;
 }
 
 

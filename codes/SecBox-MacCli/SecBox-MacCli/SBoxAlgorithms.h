@@ -17,7 +17,8 @@
 + (NSString *) base64wsEncodeWithData:(NSData *)data;
 + (NSData *) base64wsDecodeWithString:(NSString *)string;
 
-+ (NSString*) hmacSHA256WithKey:(NSString *)key string:(NSString *)string;
++ (NSString *) hmacSHA256WithKey:(NSString *)key string:(NSString *)string;
++ (NSString *) md5WithData:(NSData *)data;
 
 + (NSString*) descriptionWithNumOfBytes:(long long)numOfBytes;
 

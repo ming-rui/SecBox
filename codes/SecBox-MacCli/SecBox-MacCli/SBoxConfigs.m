@@ -19,6 +19,8 @@
 @synthesize encryptionUserName = _encryptionUserName;
 @synthesize encryptionPassword = _encryptionPassword;
 
+@synthesize pairs=_pairs;
+
 #pragma mark -
 #pragma mark Class Methods
 
@@ -72,8 +74,9 @@
 #define kCurrentRemotePathKey	@"currRemotePath"
 #define kEncryptionUserNameKey	@"encUserName"
 #define kEncryptionPasswordKey	@"encPass"
+#define kPairsKey				@"pairs"
 
-- (id)initWithCoder:(NSCoder *)coder {
+- (id) initWithCoder:(NSCoder *)coder {
     self = [super init];
     if(self){
         _accountType = [coder decodeIntForKey:kAccountTypeKey];
@@ -84,12 +87,14 @@
 		
 		_encryptionUserName = [[coder decodeObjectForKey:kEncryptionUserNameKey] retain];
 		_encryptionPassword = [[coder decodeObjectForKey:kEncryptionPasswordKey] retain];
+		
+		_pairs = [[coder decodeObjectForKey:kPairsKey] retain];
     }
 	
     return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)coder {
+- (void) encodeWithCoder:(NSCoder *)coder {
 	[coder encodeInt:_accountType forKey:kAccountTypeKey];
 	[coder encodeObject:_accountUserName forKey:kAccountUserNameKey];
 	[coder encodeObject:_accountPassword forKey:kAccountPasswordKey];
@@ -98,6 +103,8 @@
 	
 	[coder encodeObject:_encryptionUserName forKey:kEncryptionUserNameKey];
 	[coder encodeObject:_encryptionPassword forKey:kEncryptionPasswordKey];
+	
+	[coder encodeObject:_pairs forKey:kPairsKey];
 }
 
 @end

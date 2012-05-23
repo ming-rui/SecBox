@@ -60,22 +60,20 @@
 + (SBoxFileSystem *) sharedSystem {
 	static SBoxFileSystem *_sharedSystem = nil;
 	
-	@synchronized(self){
-		if(_sharedSystem==nil){
-			SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
+	if(_sharedSystem==nil){
+		SBoxConfigs *configs = [SBoxConfigs sharedConfigs];
 			
-			SBoxAccountType accountType = [configs accountType];
-			NSString *accUserName = [configs accountUserName];
-			NSString *accPassword = [configs accountPassword];
-			NSString *accToken = [configs accountToken];
-			VDiskManager *diskManager = [VDiskManager managerWithAccountType:accountType userName:accUserName password:accPassword token:accToken];
-			
-			NSString *currentPath = [configs currentRemotePath];
-			NSString *userName = [configs encryptionUserName];
-			NSString *password = [configs encryptionPassword];
-			
-			_sharedSystem = [[self alloc] initWithDiskManager:diskManager currentPath:currentPath userName:userName password:password];
-		}
+		SBoxAccountType accountType = [configs accountType];
+		NSString *accUserName = [configs accountUserName];
+		NSString *accPassword = [configs accountPassword];
+		NSString *accToken = [configs accountToken];
+		VDiskManager *diskManager = [VDiskManager managerWithAccountType:accountType userName:accUserName password:accPassword token:accToken];
+		
+		NSString *currentPath = [configs currentRemotePath];
+		NSString *userName = [configs encryptionUserName];
+		NSString *password = [configs encryptionPassword];
+		
+		_sharedSystem = [[self alloc] initWithDiskManager:diskManager currentPath:currentPath userName:userName password:password];
 	}
 	
 	return _sharedSystem;
@@ -223,7 +221,7 @@
 	return [self _updateFileTree];
 }
 
-- (NSString *) pathWithPath:(NSString *)path {
+- (NSString *) absolutePathWithPath:(NSString *)path {
 	if(![path hasPrefix:@"/"]){
 		path = [NSString stringWithFormat:@"%@/%@", _currentPath, path];
 	}
@@ -232,11 +230,45 @@
 	return path;
 }
 
+- (NSString *) fileMd5InRemoteWithContents:(NSData *)contents {
+	NSData *encryptedData = [SBoxAlgorithms encryptWithData:contents key:_password];
+	NSString *md5 = [SBoxAlgorithms md5WithData:encryptedData];
+	
+	return md5;
+}
+
+- (SBFSRet) getFileNode:(SBFSNode **)fileNode withFilePath:(NSString *)filePath {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
+	
+	filePath = [self absolutePathWithPath:filePath];
+	SBFSRet retv = SBFSValidateAbsoluteFilePath(filePath);
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	retv = [self update];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	SBFSNode *node;
+	retv = [_fileTree getFileNode:&node withFilePath:filePath];
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	*fileNode = node;
+	
+	return SBFSRetSuccess;
+}
+
 - (SBFSRet) getNodesInCurrentDirectory:(NSArray **)nodes sort:(BOOL)sort{
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	SBFSRet retv = [self update];
+	SBFSRet retv = SBFSValidateAbsolutePath(_currentPath);
+	if(retv!=SBFSRetSuccess)
+		return retv;
+	
+	retv = [self update];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -256,8 +288,8 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	path = [self pathWithPath:path];
-	SBFSRet retv = SBFSValidatePath(path);
+	path = [self absolutePathWithPath:path];
+	SBFSRet retv = SBFSValidateAbsolutePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -270,8 +302,8 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	filePath = [self pathWithPath:filePath];
-	SBFSRet retv = SBFSValidateFilePath(filePath);
+	filePath = [self absolutePathWithPath:filePath];
+	SBFSRet retv = SBFSValidateAbsoluteFilePath(filePath);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -287,13 +319,13 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	oldFilePath = [self pathWithPath:oldFilePath];
-	SBFSRet retv = SBFSValidateFilePath(oldFilePath);
+	oldFilePath = [self absolutePathWithPath:oldFilePath];
+	SBFSRet retv = SBFSValidateAbsoluteFilePath(oldFilePath);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	newFilePath = [self pathWithPath:newFilePath];
-	retv = SBFSValidateFilePath(newFilePath);
+	newFilePath = [self absolutePathWithPath:newFilePath];
+	retv = SBFSValidateAbsoluteFilePath(newFilePath);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -311,8 +343,8 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	NSString *path = [self pathWithPath:filePath];
-	SBFSRet retv = SBFSValidateFilePath(path);
+	NSString *path = [self absolutePathWithPath:filePath];
+	SBFSRet retv = SBFSValidateAbsoluteFilePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -332,9 +364,9 @@
 	if([self configuationInvalid])
 		return SBFSRetInvalidConfiguation;
 	
-	NSString *path = [self pathWithPath:filePath];
+	NSString *path = [self absolutePathWithPath:filePath];
 	
-	SBFSRet retv = SBFSValidateFilePath(path);
+	SBFSRet retv = SBFSValidateAbsoluteFilePath(path);
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -354,7 +386,7 @@
 @end
 
 
-SBFSRet SBFSValidatePath(NSString *path) {
+SBFSRet SBFSValidateAbsolutePath(NSString *path) {
 	if([path length]==0||[path characterAtIndex:0]!='/')
 		return SBFSRetInvalidPath;
 
@@ -364,15 +396,15 @@ SBFSRet SBFSValidatePath(NSString *path) {
 	return SBFSRetSuccess;
 }
 
-SBFSRet SBFSValidateFilePath(NSString *filePath) {
+SBFSRet SBFSValidateAbsoluteFilePath(NSString *filePath) {
 	if([filePath isEqualToString:@"/"])
 		return SBFSRetInvalidFilePath;
 	
-	return SBFSValidatePath(filePath);
+	return SBFSValidateAbsolutePath(filePath);
 }
 
 NSString *SBFSFileNameWithFilePath(NSString *filePath) {
-	DCAssert(SBFSValidateFilePath(filePath)==SBFSRetSuccess);
+	DCAssert(SBFSValidateAbsoluteFilePath(filePath)==SBFSRetSuccess);
 	
 	NSString *fileName = [filePath lastPathComponent];
 	DCAssert(fileName!=nil&&[fileName length]>0);
@@ -381,7 +413,7 @@ NSString *SBFSFileNameWithFilePath(NSString *filePath) {
 }
 
 NSString *SBFSDirPathWithFilePath(NSString *filePath) {
-	DCAssert(SBFSValidateFilePath(filePath)==SBFSRetSuccess);
+	DCAssert(SBFSValidateAbsoluteFilePath(filePath)==SBFSRetSuccess);
 	
 	NSString *dirPath = [filePath stringByDeletingLastPathComponent];
 	DCAssert(dirPath!=nil&&[dirPath length]>0);
@@ -390,7 +422,7 @@ NSString *SBFSDirPathWithFilePath(NSString *filePath) {
 }
 
 NSString *SBFSDirNameWithDirPath(NSString *dirPath) {
-	DCAssert(SBFSValidatePath(dirPath)==SBFSRetSuccess);
+	DCAssert(SBFSValidateAbsolutePath(dirPath)==SBFSRetSuccess);
 	
 	NSString *dirName = [dirPath lastPathComponent];
 	DCAssert(dirName!=nil&&[dirName length]>0);
@@ -399,7 +431,7 @@ NSString *SBFSDirNameWithDirPath(NSString *dirPath) {
 }
 
 NSArray *SBFSNamesWithPath(NSString *path) {
-	DCAssert(SBFSValidatePath(path)==SBFSRetSuccess);
+	DCAssert(SBFSValidateAbsolutePath(path)==SBFSRetSuccess);
 	
 	NSArray *names = [path pathComponents];
 	DCAssert(names!=nil);

@@ -11,6 +11,7 @@
 #import "SecBox.h"
 #import "SBoxDefines.h"
 #import "SBoxFileSystem.h"
+#import "SBoxSyncSystem.h"
 
 
 int main(int argc, const char * argv[]) {
@@ -99,8 +100,11 @@ int main(int argc, const char * argv[]) {
 		
 		//[[SBoxFileSystem sharedSystem] removeFileWithFilePath:@"file4"];
 		
+		//SBoxSync();
+		
 		
 		[[SBoxFileSystem sharedSystem] saveConfigs];
+		[[SBoxSyncSystem sharedSystem] saveConfigs];
 	}
 	
     return retv;

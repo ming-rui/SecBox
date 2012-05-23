@@ -16,6 +16,9 @@
 		4C6A1915155682BA00C6E914 /* SBoxAlgorithms.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */; };
 		4CC45716156A912B00026F91 /* SBFSTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC45715156A912B00026F91 /* SBFSTree.m */; };
 		4CC45719156AA06500026F91 /* SBFSNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC45718156AA06500026F91 /* SBFSNode.m */; };
+		4CC4B850156D2E75002E0146 /* SBoxSyncSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4B84F156D2E75002E0146 /* SBoxSyncSystem.m */; };
+		4CC4B854156D34EE002E0146 /* SBSSPair.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4B853156D34EE002E0146 /* SBSSPair.m */; };
+		4CC4B858156D5147002E0146 /* SBoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4B857156D5147002E0146 /* SBoxUtils.m */; };
 		4CC8416E156933C000882D56 /* SBoxFileSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8416D156933C000882D56 /* SBoxFileSystem.m */; };
 		4CD0D7B215575F7500A2A7F7 /* SBoxConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7B115575F7500A2A7F7 /* SBoxConfigs.m */; };
 		4CD0D7B7155767CD00A2A7F7 /* SecBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0D7B5155767CD00A2A7F7 /* SecBox.c */; };
@@ -65,6 +68,13 @@
 		4CC45718156AA06500026F91 /* SBFSNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBFSNode.m; sourceTree = "<group>"; };
 		4CC4571A156AAC8100026F91 /* SBFSDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBFSDefines.h; sourceTree = "<group>"; };
 		4CC4571B156AAE7D00026F91 /* VDiskConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDiskConstants.h; sourceTree = "<group>"; };
+		4CC4B84E156D2E74002E0146 /* SBoxSyncSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxSyncSystem.h; sourceTree = "<group>"; };
+		4CC4B84F156D2E75002E0146 /* SBoxSyncSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxSyncSystem.m; sourceTree = "<group>"; };
+		4CC4B852156D34EE002E0146 /* SBSSPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBSSPair.h; sourceTree = "<group>"; };
+		4CC4B853156D34EE002E0146 /* SBSSPair.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBSSPair.m; sourceTree = "<group>"; };
+		4CC4B855156D3841002E0146 /* SBSSDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBSSDefines.h; sourceTree = "<group>"; };
+		4CC4B856156D5124002E0146 /* SBoxUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxUtils.h; sourceTree = "<group>"; };
+		4CC4B857156D5147002E0146 /* SBoxUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxUtils.m; sourceTree = "<group>"; };
 		4CC8416C156933BF00882D56 /* SBoxFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxFileSystem.h; sourceTree = "<group>"; };
 		4CC8416D156933C000882D56 /* SBoxFileSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxFileSystem.m; sourceTree = "<group>"; };
 		4CD0D7B015575F7500A2A7F7 /* SBoxConfigs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBoxConfigs.h; sourceTree = "<group>"; };
@@ -142,12 +152,14 @@
 				4CD0D7C7155838FD00A2A7F7 /* SBoxNetConnection.h */,
 				4CD0D7C8155838FD00A2A7F7 /* SBoxNetConnection.m */,
 				4C23112215566656001C131A /* main.m */,
-				4CEC2847156BC7C9007AB722 /* SBoxFunctions.m */,
 				4C23112615566656001C131A /* SecBox_MacCli.1 */,
+				4CEC2847156BC7C9007AB722 /* SBoxFunctions.m */,
 				4C6A1913155682BA00C6E914 /* SBoxAlgorithms.h */,
 				4C6A1914155682BA00C6E914 /* SBoxAlgorithms.m */,
 				4CD0D7B015575F7500A2A7F7 /* SBoxConfigs.h */,
 				4CD0D7B115575F7500A2A7F7 /* SBoxConfigs.m */,
+				4CC4B856156D5124002E0146 /* SBoxUtils.h */,
+				4CC4B857156D5147002E0146 /* SBoxUtils.m */,
 				4CD0D7CA155839FC00A2A7F7 /* SBoxDefines.h */,
 				4C2CF7321568399D004F7BB2 /* VDiskDefines.h */,
 				4CC4571B156AAE7D00026F91 /* VDiskConstants.h */,
@@ -162,6 +174,11 @@
 				4CC45715156A912B00026F91 /* SBFSTree.m */,
 				4CC45717156AA06500026F91 /* SBFSNode.h */,
 				4CC45718156AA06500026F91 /* SBFSNode.m */,
+				4CC4B855156D3841002E0146 /* SBSSDefines.h */,
+				4CC4B84E156D2E74002E0146 /* SBoxSyncSystem.h */,
+				4CC4B84F156D2E75002E0146 /* SBoxSyncSystem.m */,
+				4CC4B852156D34EE002E0146 /* SBSSPair.h */,
+				4CC4B853156D34EE002E0146 /* SBSSPair.m */,
 			);
 			path = "SecBox-MacCli";
 			sourceTree = "<group>";
@@ -285,6 +302,9 @@
 				4CC45716156A912B00026F91 /* SBFSTree.m in Sources */,
 				4CC45719156AA06500026F91 /* SBFSNode.m in Sources */,
 				4CEC2848156BC7C9007AB722 /* SBoxFunctions.m in Sources */,
+				4CC4B850156D2E75002E0146 /* SBoxSyncSystem.m in Sources */,
+				4CC4B854156D34EE002E0146 /* SBSSPair.m in Sources */,
+				4CC4B858156D5147002E0146 /* SBoxUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,6 +15,9 @@
 #define kCmdCStringGetFile					"get"
 #define kCmdCStringRemove					"rm"
 #define kCmdCStringMove						"mv"
+#define kCmdCStringAddMap					"addmap"
+#define kCmdCStringRemoveMap				"rmmap"
+#define kCmdCStringSync						"sync"
 
 
 #pragma mark input suppliemnts
@@ -172,7 +175,10 @@ SBoxRet SBoxShowHelp() {
 		   "\t%s %s <local path> <remote path> : put local file to remote\n"
 		   "\t%s %s <remote path> <local path> : get remote file to local\n"
 		   "\t%s %s <remote path> : remove remote file\n"
-		   "\t%s %s <remote path 1> <remote path 2> : move remote file\n",
+		   "\t%s %s <remote path 1> <remote path 2> : move remote file\n"
+		   "\t%s %s <local path> <remote path> : map local file with remote\n"
+		   "\t%s %s <local path> : remove map\n"
+		   "\t%s %s : sync files based on the map\n",
 		   kSBoxExecutableName, kCmdCStringHelp,
 		   kSBoxExecutableName, kCmdCStringShowStatus,
 		   kSBoxExecutableName, kCmdCStringSetAccount, 
@@ -182,7 +188,10 @@ SBoxRet SBoxShowHelp() {
 		   kSBoxExecutableName, kCmdCStringPutFile,
 		   kSBoxExecutableName, kCmdCStringGetFile,
 		   kSBoxExecutableName, kCmdCStringRemove,
-		   kSBoxExecutableName, kCmdCStringMove
+		   kSBoxExecutableName, kCmdCStringMove,
+		   kSBoxExecutableName, kCmdCStringAddMap,
+		   kSBoxExecutableName, kCmdCStringRemoveMap,
+		   kSBoxExecutableName, kCmdCStringSync
 		   );
 	
 	return SBoxSuccess;
@@ -234,6 +243,15 @@ SBoxRet SBoxCLIMain(int argc, const char *argv[]) {
 	}else if(strcmp(cmdString, kCmdCStringMove)==0&&argc==4){
 		//move remote file
 		return SBoxMove(argv[2], argv[3]);
+	}else if(strcmp(cmdString, kCmdCStringAddMap)==0&&argc==4){
+		//add map
+		return SBoxAddMap(argv[2], argv[3]);
+	}else if(strcmp(cmdString, kCmdCStringRemoveMap)==0&&argc==3){
+		//remove map
+		return SBoxRemoveMap(argv[2]);
+	}else if(strcmp(cmdString, kCmdCStringSync)==0&&argc==2){
+		//sync
+		return SBoxSync();
 	}
 	
 	return invalidArguments();

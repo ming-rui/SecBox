@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import "GTMStringEncoding.h"
 #import <CommonCrypto/CommonHMAC.h>
+#import <CommonCrypto/CommonDigest.h>
 #import "SBoxDefines.h"
 
 
@@ -99,15 +100,32 @@ typedef enum {
 }
 
 + (NSString*) hmacSHA256WithKey:(NSString*)key string:(NSString*)string {
+	if(key==nil||string==nil)
+		return nil;
+	
 	const char *cStrKey = [key cStringUsingEncoding:NSUTF8StringEncoding];
 	const char *cString = [string cStringUsingEncoding:NSUTF8StringEncoding];
 	
-	unsigned char macOut[CC_SHA256_DIGEST_LENGTH];
-	CCHmac(kCCHmacAlgSHA256, cStrKey, strlen(cStrKey), cString, strlen(cString), macOut);
+	unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+	CCHmac(kCCHmacAlgSHA256, cStrKey, strlen(cStrKey), cString, strlen(cString), digest);
 	
-	NSMutableString *result = [NSMutableString string];
-	for(int i=0; i<CC_SHA256_DIGEST_LENGTH; i++)
-		[result appendFormat:@"%02x", macOut[i]];
+	NSMutableString *result = [NSMutableString stringWithCapacity:sizeof(digest)];
+	for(int i=0; i<sizeof(digest); i++)
+		[result appendFormat:@"%02x", digest[i]];
+	
+	return result;
+}
+
++ (NSString *) md5WithData:(NSData *)data {
+	if(data==nil)
+		return nil;
+	
+	unsigned char digest[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([data bytes], [data length], digest);
+	
+	NSMutableString *result = [NSMutableString stringWithCapacity:sizeof(digest)];
+	for(int i=0; i<sizeof(digest); i++)
+		[result appendFormat:@"%02x", digest[i]];
 	
 	return result;
 }

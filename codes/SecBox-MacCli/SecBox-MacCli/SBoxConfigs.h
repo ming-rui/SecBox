@@ -22,6 +22,9 @@
 	//local
 	NSString *_encryptionUserName;
 	NSString *_encryptionPassword;
+	
+	//sync info
+	NSMutableDictionary *_pairs;
 }
 
 @property(nonatomic,assign) SBoxAccountType accountType;
@@ -33,7 +36,10 @@
 @property(nonatomic,retain) NSString *encryptionUserName;
 @property(nonatomic,retain) NSString *encryptionPassword;
 
+@property(nonatomic,retain) NSMutableDictionary *pairs;
+
 + (SBoxConfigs *) sharedConfigs;
+
 - (void) save;
 
 @end
