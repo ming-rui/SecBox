@@ -12,7 +12,7 @@ typedef enum {
 	SBSSRetInvalidLocalPath		= -301,
 	SBSSRetLocalPathNotExist	= -302,
 	SBSSRetCantCreateLocalFile	= -303,
-}SBSSErrCode;
+}SBSSArgumentedErrCode;
 
 typedef int	SBSSRet;
 #define SBSSRetSuccess 0

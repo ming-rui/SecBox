@@ -14,13 +14,14 @@
 #import "SBFSTree.h"
 
 
-@interface SBoxFileSystem : NSObject {
+@interface SBoxFileSystem : NSObject <VDiskManagerDelegate> {
 	@private
 	VDiskManager *_diskManager;
 	NSString *_currentPath;
 	NSString *_userName;
 	NSString *_password;
-	SBFSTree *_fileTree;
+	SBFSTree *_fileTree;	//ONLY accessed by getFileTree:, _updateFileTree
+	BOOL _fileTreeUpdated;
 }
 
 @property(nonatomic,readonly) VDiskManager* diskManager;
@@ -36,8 +37,6 @@
 
 - (NSString *) absolutePathWithPath:(NSString *)path;
 - (NSString *) fileMd5InRemoteWithContents:(NSData *)contents;
-
-- (SBFSRet) update;
 
 - (SBFSRet) getFileNode:(SBFSNode **)fileNode withFilePath:(NSString *)filePath;
 

@@ -30,9 +30,12 @@ typedef struct {
 #define VDiskQuotaMake(used,total)	((VDiskQuota){(used),(total)})
 
 @class SBJsonParser;
+@protocol VDiskManagerDelegate;
 
 @interface VDiskManager : NSObject {
 	@private
+	id<VDiskManagerDelegate> _delegate;
+	
 	//account info
 	VDiskAccountType _accountType;
 	NSString *_userName;
@@ -45,22 +48,26 @@ typedef struct {
 	
 	//helper
 	SBJsonParser *_jsonParser;
+	
+	//cache
+	NSArray *_rootFileList;	//ONLY accessed by getRootFileList:
 }
 
+@property(nonatomic,assign) id<VDiskManagerDelegate> delegate;
 @property(nonatomic,assign) VDiskAccountType accountType;
 @property(nonatomic,retain) NSString* userName;
 @property(nonatomic,retain) NSString* password;
 @property(nonatomic,retain) NSString* token;
 
-+ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token;
++ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName 
+								 password:(NSString *)password token:(NSString *)token;
 
 - (BOOL) configurationInvalid;
 
-- (VDiskRet) getToken;
-- (VDiskRet) keepToken;
+- (VDiskRet) keepTokenAndSync;
 
 - (VDiskRet) getQuota:(VDiskQuota *)quota;
-- (VDiskRet) getRootFileList:(NSMutableArray *)fileList;
+- (VDiskRet) getRootFileList:(NSArray **)fileList;
 
 - (VDiskRet) getRootFileInfo:(VDiskItemInfo **)fileInfo withFileName:(NSString *)fileName;
 - (VDiskRet) removeRootFileWithFileName:(NSString *)fileName;
@@ -74,4 +81,10 @@ typedef struct {
 //- (SBoxRet) putFile:(NSData*)data withPath:(NSString*)path;
 //- (SBoxRet) getFile:(NSMutableData*)data withPath:(NSString*)path;
 
+@end
+
+
+@protocol VDiskManagerDelegate
+@required
+- (void) vDiskManagerFileListUpdated:(VDiskManager *)vDiskManager;
 @end

@@ -55,6 +55,8 @@
 
 @implementation VDiskManager
 
+
+@synthesize delegate=_delegate;
 @synthesize accountType=_accountType;
 @synthesize userName=_userName;
 @synthesize password=_password;
@@ -63,7 +65,8 @@
 
 #pragma mark object life cycle
 
-- (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token {
+- (id) initWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName 
+				  password:(NSString *)password token:(NSString *)token {
 	self = [super init];
 	if(self){
 		_accountType = accountType;
@@ -85,11 +88,13 @@
 	[_password release];
 	[_token release];
 	[_jsonParser release];
+	[_rootFileList release];
 	
 	[super dealloc];
 }
 
-+ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName password:(NSString *)password token:(NSString *)token {
++ (VDiskManager *) managerWithAccountType:(VDiskAccountType)accountType userName:(NSString *)userName
+								 password:(NSString *)password token:(NSString *)token {
 	return [[[self alloc] initWithAccountType:accountType userName:userName password:password token:token] autorelease];
 }
 
@@ -115,10 +120,12 @@ NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
 		[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		
 		if([value isKindOfClass:[NSString class]]){
-			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, (NSString*)value];
+			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@",
+					  key, (NSString*)value];
 			[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		}else if([value isKindOfClass:[NSNumber class]]){
-			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@", key, [(NSNumber*)value stringValue]];
+			string = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n%@",
+					  key, [(NSNumber*)value stringValue]];
 			[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 		}else if([value isKindOfClass:[VDiskFilePack class]]){
 			NSString *fileName = [(VDiskFilePack*)value fileName];
@@ -237,7 +244,8 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 	return [dologID intValue];
 }
 
-- (VDiskRet) keepToken {
+/* post condition: token is kept */
+- (VDiskRet) keepTokenAndSync {
 	if(_state==VDiskManagerStateOffline){
 		VDiskRet retv = [self getToken];
 		if(retv!=VDiskRetSuccess)
@@ -259,14 +267,18 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 		return VDiskRetConnectionError;
 	
 	VDiskRet errCode = errCodeWithDict(dict);
-	
+	if(errCode==VDiskRetInvalidToken)
+		errCode = [self getToken];
 	if(errCode!=VDiskRetSuccess)
-		return [self getToken];
+		return errCode;
 	
 	NSInteger dologID = dologIDWithDict(dict);
 	if(dologID!=_dologID){
-		/* update directory */
+		/* update */
 		_dologID = dologID;
+		[_rootFileList release];
+		_rootFileList = nil;
+		[_delegate vDiskManagerFileListUpdated:self];
 	}
 	
 	return VDiskRetSuccess;
@@ -290,7 +302,7 @@ VDiskQuota quotaWithDict(NSDictionary *dict) {
 
 /* post condition: token is kept */
 - (VDiskRet) getQuota:(VDiskQuota *)quota {
-	VDiskRet retv = [self keepToken];
+	VDiskRet retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -342,7 +354,7 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	}
 }
 
-- (VDiskRet) _getFileList:(NSMutableArray *)fileList withDirID:(VDiskDirID)dirID page:(NSInteger)page {
+- (VDiskRet) _fillFileList:(NSMutableArray *)fileList withDirID:(VDiskDirID)dirID page:(NSInteger)page {
 	NSDictionary *postDict = [NSDictionary dictionaryWithObjectsAndKeys:
 							  _token, kVDiskPostLabelToken,
 							  [NSNumber numberWithInt:dirID], kVDiskPostLabelDirID,
@@ -368,25 +380,45 @@ void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
 	NSInteger pageTotal = pageTotalWithDict(dict);
 	
 	if(page<pageTotal)
-		return [self _getFileList:fileList withDirID:dirID page:page+1];	//recursive add
+		return [self _fillFileList:fileList withDirID:dirID page:page+1];	//recursive add
 	
 	return VDiskRetSuccess;
 }
 
 /* post condition: token is kept */
-- (VDiskRet) getFileList:(NSMutableArray *)fileList withDirID:(VDiskDirID)dirID {
-	VDiskRet retv = [self keepToken];
+- (VDiskRet) getFileList:(NSArray **)fileList withDirID:(VDiskDirID)dirID {
+	VDiskRet retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
-	[fileList removeAllObjects];
+	NSMutableArray *list = [NSMutableArray array];
+	retv = [self _fillFileList:list withDirID:dirID page:1];
+	if(retv!=VDiskRetSuccess)
+		return retv;
 	
-	return [self _getFileList:fileList withDirID:dirID page:1];
+	*fileList = list;
+	
+	return VDiskRetSuccess;
 }
 
 /* post condition: token is kept */
-- (VDiskRet) getRootFileList:(NSMutableArray *)fileList {
-	return [self getFileList:fileList withDirID:VDiskRootDirID];
+- (VDiskRet) getRootFileList:(NSArray **)fileList {
+	if(_rootFileList){
+		*fileList = _rootFileList;
+		return VDiskRetSuccess;
+	}
+	
+	NSArray *list;
+	VDiskRet retv = [self getFileList:&list withDirID:VDiskRootDirID];
+	if(retv!=VDiskRetSuccess)
+		return retv;
+	
+	[list retain];
+	[_rootFileList release];
+	_rootFileList = list;
+	*fileList = _rootFileList;
+	
+	return VDiskRetSuccess;
 }
 
 
@@ -410,14 +442,14 @@ VDiskRet validateFileName(NSString *fileName) {
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
-	NSMutableArray *fileList = [NSMutableArray array];
-	retv = [self getRootFileList:fileList];
+	NSArray *fileList;
+	retv = [self getRootFileList:&fileList];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
 	*fileID = VDiskFileIDInvalid;
 	for(VDiskItemInfo *fileInfo in fileList)
-		if([[fileInfo name] isEqualToString:fileName]){
+		if([fileName isEqualToString:[fileInfo name]]){
 			*fileID = [fileInfo itemID];
 			DAssert([fileInfo isFile]);
 			break;
@@ -431,7 +463,7 @@ VDiskRet validateFileName(NSString *fileName) {
 
 /* post condition: token is kept */
 - (VDiskRet) getFileInfo:(VDiskItemInfo **)fileInfo withFileID:(VDiskFileID)fileID {
-	VDiskRet retv = [self keepToken];
+	VDiskRet retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -469,7 +501,6 @@ VDiskRet validateFileName(NSString *fileName) {
 	VDiskRet retv = [self getRootFileID:&fileID withFileName:fileName];
 	if(retv!=VDiskRetSuccess)
 		return retv;
-	//post condition: fileName length vaild
 	
 	retv = [self getFileInfo:fileInfo withFileID:fileID];
 	if(retv!=VDiskRetSuccess)
@@ -483,7 +514,7 @@ VDiskRet validateFileName(NSString *fileName) {
 
 /* post condition: token is kept */
 - (VDiskRet) removeFileWithFileID:(VDiskFileID)fileID {
-	VDiskRet retv = [self keepToken];
+	VDiskRet retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -527,7 +558,7 @@ VDiskRet validateFileName(NSString *fileName) {
 
 /* post condition: token is kept */
 - (VDiskRet) renameFileWithFileID:(VDiskFileID)fileID newFileName:(NSString *)newFileName {
-	VDiskRet retv = [self keepToken];
+	VDiskRet retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -579,7 +610,7 @@ VDiskRet validateFileName(NSString *fileName) {
 	if(contents==nil)
 		return VDiskRetInvalidFileContents;
 	
-	retv = [self keepToken];
+	retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	

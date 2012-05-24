@@ -19,7 +19,7 @@ typedef enum{
 	SBFSRetNodeNameCollision	= -217,
 	SBFSRetEncrytionError		= -220,
 	SBFSRetDecrytionError		= -221,
-}SBFSErrCode;
+}SBFSArgumentedErrCode;
 
 typedef int	SBFSRet;
 #define SBFSRetSuccess 0

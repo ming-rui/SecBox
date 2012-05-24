@@ -34,6 +34,7 @@
 	self = [super init];
 	if(self){
 		_diskManager = [diskManager retain];
+		[_diskManager setDelegate:self];
 		if(currentPath){
 			_currentPath = [currentPath retain];
 		}else{
@@ -189,11 +190,14 @@
 	return path;
 }
 
+
+#pragma mark fileTree cache
+
 - (SBFSRet) _updateFileTree {
 	[_fileTree removeAllData];
 	
-	NSMutableArray *fileList = [NSMutableArray array];
-	VDiskRet retv = [_diskManager getRootFileList:fileList];
+	NSArray *fileList;
+	VDiskRet retv = [_diskManager getRootFileList:&fileList];
 	if(retv!=VDiskRetSuccess)
 		return retv;
 	
@@ -204,6 +208,23 @@
 			[_fileTree addFileNodeWithFilePath:path vDiskItemInfo:fileInfo overwrite:NO];
 	}
 	
+	_fileTreeUpdated = YES;
+	
+	return SBFSRetSuccess;
+}
+
+- (SBFSRet) getFileTree:(SBFSTree **)fileTree {
+	if([self configuationInvalid])
+		return SBFSRetInvalidConfiguation;
+	
+	if(!_fileTreeUpdated){
+		SBFSRet retv = [self _updateFileTree];
+		if(retv!=SBFSRetSuccess)
+			return retv;
+	}
+	
+	*fileTree = _fileTree;
+	
 	return SBFSRetSuccess;
 }
 
@@ -212,13 +233,6 @@
 
 - (BOOL) configuationInvalid {
 	return (_userName==nil||_password==nil||[_diskManager configurationInvalid]);
-}
-
-- (SBFSRet) update {
-	if([self configuationInvalid])
-		return SBFSRetInvalidConfiguation;
-	
-	return [self _updateFileTree];
 }
 
 - (NSString *) absolutePathWithPath:(NSString *)path {
@@ -246,12 +260,13 @@
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	retv = [self update];
+	SBFSTree *fileTree;
+	retv = [self getFileTree:&fileTree];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
 	SBFSNode *node;
-	retv = [_fileTree getFileNode:&node withFilePath:filePath];
+	retv = [fileTree getFileNode:&node withFilePath:filePath];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -268,12 +283,13 @@
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
-	retv = [self update];
+	SBFSTree *fileTree;
+	retv = [self getFileTree:&fileTree];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
 	SBFSNode *dirNode;
-	retv = [_fileTree getDirNode:&dirNode withDirPath:_currentPath createDir:YES];
+	retv = [fileTree getDirNode:&dirNode withDirPath:_currentPath createDir:YES];
 	if(retv!=SBFSRetSuccess)
 		return retv;
 	
@@ -383,8 +399,18 @@
 	return SBFSRetSuccess;
 }
 
+
+#pragma mark VDiskManagerDelegate
+
+- (void) vDiskManagerFileListUpdated:(VDiskManager *)vDiskManager {
+	_fileTreeUpdated = NO;
+}
+
 @end
 
+
+#pragma mark -
+#pragma mark C functions
 
 SBFSRet SBFSValidateAbsolutePath(NSString *path) {
 	if([path length]==0||[path characterAtIndex:0]!='/')
