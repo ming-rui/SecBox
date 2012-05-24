@@ -9,3 +9,16 @@ google-toolbox-for-mac
 base64:rfc4648
 AES128
 密码需要处理一下？
+文件名：SecBox[用户（明文）][类型（明文）][路径＋文件名（加密、base64ws）]
+类型：E,S:<分享用户>,D
+	E		用户为所有者，文件内容加密，路径加密并base64ws
+	N		用户为所有者，文件内容未加密，路径base64ws
+	S:<分享用户>	用户为被分享着，文件内容未加密，路径base64ws
+	D		用户为所有者，文件内容为空（或忽略），用来指示文件夹
+
+hmacSHA256：与服务器通讯
+md5：文件版本检测
+AES128：数据加密
+base64ws：文件名合法化
+
+encryption user name 不能有方括号[]，不能为空
