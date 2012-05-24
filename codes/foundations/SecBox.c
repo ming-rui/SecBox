@@ -43,13 +43,6 @@ char* getString(char *string, int size, char secret, char *prompt) {
 	return retv;
 }
 
-SBoxRet invalidInput() {
-	printf("invalid input!\n");
-	
-	return SBoxRetInvalidInput;
-}
-
-
 #pragma mark input account info
 
 SBoxRet inputAccountType(SBoxAccountType *accountType) {
@@ -65,7 +58,7 @@ SBoxRet inputAccountType(SBoxAccountType *accountType) {
 	}else if(strcmp(inputString, kAccountTypeStringWeipan)==0){
 		*accountType = SBoxAccountTypeWeipan;
 	}else{
-		return invalidInput();
+		return SBoxRetInvalidInput;
 	}
 	
 	return SBoxSuccess;
@@ -74,23 +67,17 @@ SBoxRet inputAccountType(SBoxAccountType *accountType) {
 SBoxRet inputAccountUserName(char *userName, int size) {
 	char *retv = getString(userName, size, 0, "Set Account User Name:");
 	
-	if(retv==NULL)
+	if(retv==NULL||retv[0]=='\0')
 		return SBoxRetInvalidInput;
-	
-	if(retv[0]=='\0')
-		return invalidInput();
-	
+
 	return SBoxSuccess;
 }
 
 SBoxRet inputAccountPassword(char *password, int size) {
 	char *retv = getString(password, size, 1, "Set Account Password:");
 	
-	if(retv==NULL)
+	if(retv==NULL||retv[0]=='\0')
 		return SBoxRetInvalidInput;
-	
-	if(retv[0]=='\0')
-		return invalidInput();
 	
 	return SBoxSuccess;
 }
@@ -123,11 +110,8 @@ SBoxRet inputAccountInfo() {
 SBoxRet inputEncryptionUserName(char *userName, int size) {
 	char *retv = getString(userName, size, 0, "Set Encryption User Name:");
 	
-	if(retv==NULL)
+	if(retv==NULL||retv[0]=='\0')
 		return SBoxRetInvalidInput;
-	
-	if(retv[0]=='\0')
-		return invalidInput();
 	
 	return SBoxSuccess;
 }
@@ -135,11 +119,8 @@ SBoxRet inputEncryptionUserName(char *userName, int size) {
 SBoxRet inputEncryptionPassword(char *password, int size) {
 	char *retv = getString(password, size, 1, "Set Encryption Password:");
 	
-	if(retv==NULL)
+	if(retv==NULL||retv[0]=='\0')
 		return SBoxRetInvalidInput;
-	
-	if(retv[0]=='\0')
-		return invalidInput();
 	
 	return SBoxSuccess;
 }
@@ -201,7 +182,6 @@ SBoxRet SBoxShowHelp() {
 #pragma mark CLIMain
 
 SBoxRet invalidArguments() {
-	printf("Wrong Arguments!\n");
 	SBoxShowHelp();
 	
 	return SBoxRetInvalidArgument;

@@ -20,7 +20,8 @@ int main(int argc, const char * argv[]) {
 		
 		retv = SBoxCLIMain(argc, argv);
 		if(retv!=SBoxSuccess){
-			printf("Operation Error! Code:%i\n",retv);
+			const char *string = SBoxErrStringWithErrCode(retv);
+			printf("%s (code:%i)\n", string, retv);
 		}else{
 			printf("Operation Completed.\n");
 		}
@@ -101,6 +102,9 @@ int main(int argc, const char * argv[]) {
 		//[[SBoxFileSystem sharedSystem] removeFileWithFilePath:@"file4"];
 		
 		//SBoxSync();
+		
+		//NSData *data = [NSData dataWithBytes:d length:sizeof(d)];
+		//retv = [[[SBoxFileSystem sharedSystem] diskManager] uploadFileToRootWithFileName:@"maxSize" contents:data];
 		
 		
 		[[SBoxFileSystem sharedSystem] saveConfigs];

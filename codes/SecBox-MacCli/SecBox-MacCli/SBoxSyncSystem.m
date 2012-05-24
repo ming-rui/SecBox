@@ -97,6 +97,13 @@
 - (SBSSRet) syncOneWithAction:(SBSSSyncAction)action andGetResult:(SBSSSyncResult *)result pair:(SBSSPair **)pair {
 	SBSSPair *currentPair = [_syncList objectAtIndex:_syncIndex];
 	*pair = currentPair;
+	
+	if(action==SBSSSyncActionSkip){
+		_syncIndex++;
+		*result = SBSSSyncSkipped;
+		return SBSSRetSuccess;
+	}
+	
 	NSString *localPath = [currentPair localPath];
 	NSString *remotePath = [currentPair remotePath];
 	
@@ -117,17 +124,24 @@
 	}
 	NSString *remoteMd5 = [[fileNode itemInfo] fileMd5];
 	
+	NSString *lastMd5 = [currentPair lastMd5];
+	
 	if(localFileExist&&remoteFileExist&&[localMd5 isEqualToString:remoteMd5]){
 		/* no action */
 		*result = SBSSSyncSame;
-	}else if((localFileExist&&remoteFileExist&&action==SBSSSyncActionForceUpload)||(localFileExist&&!remoteFileExist)){
+		[currentPair setLastMd5:localMd5];
+	}else if((localFileExist&&remoteFileExist&&action==SBSSSyncActionForceUpload)
+			 ||(localFileExist&&remoteFileExist&&action==SBSSSyncActionSync&&[lastMd5 isEqualToString:remoteMd5])
+			 ||(localFileExist&&!remoteFileExist)){
 		/* put */
 		*result = SBSSSyncUploaded;
 		retv = [remote putFileWithFilePath:remotePath contents:fileContents];
 		if(retv!=SBFSRetSuccess)
 			return retv;
 		[currentPair setLastMd5:localMd5];
-	}else if((localFileExist&&remoteFileExist&&action==SBSSSyncActionForceDownload)||(!localFileExist&&remoteFileExist)){
+	}else if((localFileExist&&remoteFileExist&&action==SBSSSyncActionForceDownload)
+			 ||(localFileExist&&remoteFileExist&&action==SBSSSyncActionSync&&[lastMd5 isEqualToString:localMd5])
+			 ||(!localFileExist&&remoteFileExist)){
 		/* get */
 		*result = SBSSSyncDownloaded;
 		retv = [remote getFile:&fileContents withFilePath:remotePath];
@@ -138,12 +152,13 @@
 		if(!rt)
 			return SBSSRetCantCreateLocalFile;
 		[currentPair setLastMd5:remoteMd5];
-	}else if(localFileExist&&remoteFileExist&&action==SBSSSyncActionReportCollision){
-		/* report */
-		*result = SBSSSyncConflicted;
 	}else if(!localFileExist&&!remoteFileExist){
 		/* both files do not exist */
 		*result = SBSSSyncFilesDoNotExist;
+	}else if(localFileExist&&remoteFileExist&&action==SBSSSyncActionSync){
+		/* report */
+		*result = SBSSSyncConflicted;
+		_syncIndex--;
 	}else{
 		DAssert(NO);
 	}

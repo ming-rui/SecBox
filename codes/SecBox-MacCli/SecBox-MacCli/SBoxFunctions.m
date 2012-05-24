@@ -14,6 +14,97 @@
 #import "SBoxSyncSystem.h"
 
 
+const char * SBoxErrStringWithErrCode(SBoxRet errCode) {
+	if(errCode>0){
+		switch(errCode){
+			case 1:
+			case 2:
+			case 3:
+				return "Invalid Parameters.";
+			case VDiskUploadFileRetFileNameCollision:
+			case VDiskRenameFileRetFileNameCollision:
+				return "Remote File Already Exists.";
+			case VDiskUploadFileRetSystemError:
+				return "Server Error.";
+			case VDiskUploadFileRetLowCapacity:
+				return "Lack Of Remote Disk Space.";
+			case VDiskUploadFileRetOverUpMaxFileSize:
+			case VDiskUploadFileRetOverMaxFileSize:
+				return "File Size Too Large (>10 MB).";
+			case VDiskUploadFileRetUploadNotFull:
+			case VDiskUploadFileRetUploadFail:
+				return "Failed To Upload The File.";
+			case VDiskUploadFileRetDirFull:
+				return "Too Many Files On The Server.";
+			case VDiskRetExceedLimits:
+				return "Exceeded Operation Limits. Try Again Latter.";
+			default:
+				return "Error Occurred.";
+		}
+	}
+	
+	if(errCode<0){
+		switch(errCode){
+			case SBoxRetInvalidArgument:
+				return "Invalid Arguments.";
+			case SBoxRetInvalidInput:
+				return "Invalid Inputs.";
+			case SBoxRetLocalFileNotExist:
+				return "Local File Do Not Exist.";
+			case SBoxRetCantCreateLocalFile:
+				return "Can't Create Local File.";
+			case VDiskRetConnectionError:
+				return "Network Connection Error.";
+			case VDiskRetNoMatchingFile:
+				return "Can't Find The File.";
+			case VDiskRetWrongItemType:
+				return "It's Not A File Or Directory.";
+			case VDiskRetFileNameTooLong:
+				return "File Name Is Too Long.";
+			case VDiskRetInvalidFileName:
+				return "Invalid File Name.";
+			case VDiskRetInvalidFileContents:
+				return "Invalid File Contents.";
+			case VDiskRetFileSizeTooLarge:
+				return "File Size Too Large (>10 MB).";
+			case SBFSRetInvalidConfiguation:
+				return "Invalid Configurations. Please Finish The Settings First.";
+			case SBFSRetPathTooLong:
+				return "File Path Is Too Long.";
+			case SBFSRetInvalidPath:
+				return "Invalid Path.";
+			case SBFSRetInvalidFilePath:
+				return "Invalid File Path.";
+			case SBFSRetNodeNotExist:
+				return "File/Directory Not Found.";
+			case SBFSRetFileInPath:
+				return "Wrong Path.";
+			case SBFSRetNodeIsNotFile:
+				return "It Is Not A File.";
+			case SBFSRetNodeIsNotDir:
+				return "It Is Not A Directory.";
+			case SBFSRetNodeNameCollision:
+				return "File Name Already Exists.";
+			case SBFSRetEncrytionError:
+				return "Encrytion Error.";
+			case SBFSRetDecrytionError:
+				return "Decryption Error.";
+			case SBSSRetLocalPathCollision:
+				return "The Local Path Already Exists.";
+			case SBSSRetInvalidLocalPath:
+				return "Invalid Local Path.";
+			case SBSSRetLocalPathNotExist:
+				return "Local Path Do Not Exist.";
+			case SBSSRetCantCreateLocalFile:
+				return "Can't Save Local File.";
+			default:
+				return "Application Error.";
+		}
+	}
+	
+	return "Operation Completed.";
+}
+
 SBoxRet SBoxShowStatus() {
 	DLog(@"show status");
 	/* show configs & server status */
@@ -209,14 +300,15 @@ SBoxRet SBoxRemoveMap(const char *localPath) {
 SBoxRet SBoxSync() {
 	SBoxSyncSystem *system = [SBoxSyncSystem sharedSystem];
 	[system initSync];
-	//SBSSSyncAction nextAction = SBSSSyncActionReportCollision;
+	SBSSSyncAction nextAction = SBSSSyncActionSync;
 	while([system stillCanSync]){
 		SBSSSyncResult result;
 		SBSSPair *pair;
-		SBSSRet retv = [system syncOneWithAction:SBSSSyncActionForceUpload andGetResult:&result pair:&pair];
+		SBSSRet retv = [system syncOneWithAction:nextAction andGetResult:&result pair:&pair];
 		if(retv!=SBSSRetSuccess)
 			return retv;
 		
+		nextAction = SBSSSyncActionSync;
 		const char *localPath = [[pair localPath] cStringUsingEncoding:NSUTF8StringEncoding];
 		switch(result){
 			case SBSSSyncUploaded:
@@ -231,8 +323,21 @@ SBoxRet SBoxSync() {
 			case SBSSSyncFilesDoNotExist:
 				printf("File \"%s\" and its online counterpart neither exist.\n",localPath);
 				break;
-			case SBSSSyncConflicted:
+			case SBSSSyncConflicted:{
 				printf("File \"%s\" conflicts the online version.\n",localPath);
+				char buff[10];
+				char *ans = getString(buff, sizeof(buff), 0, "upload, download or skip?");
+				if(strcmp(ans, "upload")==0){
+					nextAction = SBSSSyncActionForceUpload;
+				}else if(strcmp(ans, "download")==0){
+					nextAction = SBSSSyncActionForceDownload;
+				}else if(strcmp(ans, "skip")==0){
+					nextAction = SBSSSyncActionSkip;
+				}
+				break;
+			}
+			case SBSSSyncSkipped:
+				printf("File \"%s\" is skipped.\n",localPath);
 				break;
 		}
 	}

@@ -610,6 +610,9 @@ VDiskRet validateFileName(NSString *fileName) {
 	if(contents==nil)
 		return VDiskRetInvalidFileContents;
 	
+	if([contents length]>kVDiskMaxFileSize)
+		return VDiskRetFileSizeTooLarge;
+	
 	retv = [self keepTokenAndSync];
 	if(retv!=VDiskRetSuccess)
 		return retv;

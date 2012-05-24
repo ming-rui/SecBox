@@ -26,6 +26,8 @@ typedef int SBoxRet;
 
 SBoxRet SBoxCLIMain(int argc, const char *argv[]);
 
+const char * SBoxErrStringWithErrCode(SBoxRet errCode);
+
 
 #pragma mark infomation
 
@@ -56,5 +58,9 @@ SBoxRet SBoxAddMap(const char *localPath, const char *remotePath);
 SBoxRet SBoxRemoveMap(const char *localPath);
 SBoxRet SBoxSync();
 
+
+#pragma mark others
+
+char* getString(char *string, int size, char secret, char *prompt);
 
 

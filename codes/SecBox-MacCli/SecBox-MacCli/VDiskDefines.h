@@ -73,10 +73,12 @@ typedef enum {
 	VDiskRetFileNameTooLong		= -103,
 	VDiskRetInvalidFileName		= -104,
 	VDiskRetInvalidFileContents	= -105,
+	VDiskRetFileSizeTooLarge	= -106,
 }VDiskArgumentedErrCode;
 
 
 #define kVDiskMaxFileNameLength		255
+#define kVDiskMaxFileSize			1024*1024*10
 
 
 

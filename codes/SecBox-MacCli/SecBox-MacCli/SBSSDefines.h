@@ -18,9 +18,10 @@ typedef int	SBSSRet;
 #define SBSSRetSuccess 0
 
 typedef enum {
+	SBSSSyncActionSync,
 	SBSSSyncActionForceUpload,
 	SBSSSyncActionForceDownload,
-	SBSSSyncActionReportCollision,
+	SBSSSyncActionSkip,
 }SBSSSyncAction;
 
 typedef enum {
@@ -29,4 +30,5 @@ typedef enum {
 	SBSSSyncSame,
 	SBSSSyncFilesDoNotExist,
 	SBSSSyncConflicted,
+	SBSSSyncSkipped,
 }SBSSSyncResult;
