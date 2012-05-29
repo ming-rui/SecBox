@@ -174,18 +174,6 @@
 	return YES;
 }
 
-- (NSString *) _processPath:(NSString *)path {
-	//for compatability
-	//WARRNING! this may lead to some bugs.
-	if([path hasPrefix:@"/"])
-		return path;
-	path = [path stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-	if(![path hasPrefix:@"/"])
-		path = [@"/" stringByAppendingString:path];
-	
-	return path;
-}
-
 - (NSString *) pathWithPhysicalName:(NSString *)physicalName {
 	DAssert(_userName!=nil&&_password!=nil);
 	NSString *userName = nil;
@@ -198,7 +186,6 @@
 	NSData *data = [SBoxAlgorithms base64wsDecodeWithString:string];
 	NSData *decrytedData = [SBoxAlgorithms decryptWithData:data Key:_password];
 	NSString *path = [[[NSString alloc] initWithData:decrytedData encoding:NSUTF8StringEncoding] autorelease];
-	path = [self _processPath:path];
 	
 	return path;
 }
