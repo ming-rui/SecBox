@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SecBox.h"
+#import "SecBoxDefines.h"
 #import "VDiskManager.h"
 #import "SBFSDefines.h"
 #import "SBFSTree.h"

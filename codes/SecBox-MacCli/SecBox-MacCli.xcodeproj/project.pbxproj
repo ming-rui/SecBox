@@ -98,6 +98,7 @@
 		4CC5855B15754A8A00D22B47 /* SBJsonTokeniser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonTokeniser.m; sourceTree = "<group>"; };
 		4CC5855C15754A8A00D22B47 /* SBJsonUTF8Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonUTF8Stream.h; sourceTree = "<group>"; };
 		4CC5855D15754A8A00D22B47 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
+		4CC585C415754DB700D22B47 /* SecBoxDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecBoxDefines.h; sourceTree = "<group>"; };
 		4CD0D7B5155767CD00A2A7F7 /* SecBox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SecBox.c; sourceTree = "<group>"; };
 		4CD0D7B6155767CD00A2A7F7 /* SecBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecBox.h; sourceTree = "<group>"; };
 		4CEC2847156BC7C9007AB722 /* SBoxFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBoxFunctions.m; sourceTree = "<group>"; };
@@ -275,6 +276,7 @@
 		4CD0D7B4155767CD00A2A7F7 /* foundations */ = {
 			isa = PBXGroup;
 			children = (
+				4CC585C415754DB700D22B47 /* SecBoxDefines.h */,
 				4CD0D7B6155767CD00A2A7F7 /* SecBox.h */,
 				4CD0D7B5155767CD00A2A7F7 /* SecBox.c */,
 			);
