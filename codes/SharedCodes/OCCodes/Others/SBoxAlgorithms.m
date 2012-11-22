@@ -135,13 +135,13 @@ typedef enum {
 	static const long long rank[] = {1024ll*1024*1024*1024, 1024ll*1024*1024, 1024ll*1024, 1024ll, 1ll};
 	static const NSString *units[] = {@"TB",@"GB",@"MB",@"KB",@"B"};
 	
-	DCAssert(numOfBytes>=0,@"");
+	DCAssert(numOfBytes>=0);
 	for(int i=0; i<numOfUnits ;i++){
 		if(numOfBytes<rank[i])
 			continue;
 		
 		double num = (double)numOfBytes/rank[i];
-		NSString *result = [NSString stringWithFormat:@"%7.1llf %@", num, units[i]];
+		NSString *result = [NSString stringWithFormat:@"%7.1lf %@", num, units[i]];
 		
 		return result;
 	}

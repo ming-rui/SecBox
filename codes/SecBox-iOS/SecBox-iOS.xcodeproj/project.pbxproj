@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C2AC352165E5E8B00305D48 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C2AC346165E5CCC00305D48 /* Default-568h@2x.png */; };
 		4CC584F3157545A300D22B47 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CC584F2157545A300D22B47 /* UIKit.framework */; };
 		4CC584F5157545A300D22B47 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CC584F4157545A300D22B47 /* Foundation.framework */; };
 		4CC584F7157545A300D22B47 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CC584F6157545A300D22B47 /* CoreGraphics.framework */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4C2AC346165E5CCC00305D48 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		4CC584EE157545A300D22B47 /* SecBox-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SecBox-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CC584F2157545A300D22B47 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4CC584F4157545A300D22B47 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -125,6 +127,7 @@
 		4CC584E3157545A300D22B47 = {
 			isa = PBXGroup;
 			children = (
+				4C2AC346165E5CCC00305D48 /* Default-568h@2x.png */,
 				4CC584F8157545A300D22B47 /* SecBox-iOS */,
 				4CC584F1157545A300D22B47 /* Frameworks */,
 				4CC584EF157545A300D22B47 /* Products */,
@@ -356,6 +359,7 @@
 				4CC5850D157545A400D22B47 /* first@2x.png in Resources */,
 				4CC58512157545A400D22B47 /* second.png in Resources */,
 				4CC58514157545A400D22B47 /* second@2x.png in Resources */,
+				4C2AC352165E5E8B00305D48 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

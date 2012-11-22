@@ -135,7 +135,7 @@ NSData* dataToPostWithDictAndBoundary(NSDictionary *dict, NSString *boundary) {
 			[data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 			[data appendData:contents];
 		}else{
-			DCAssert(NO,@"");
+			DCAssert(NO);
 		}
 		
 		string = @"\r\n";
@@ -172,19 +172,19 @@ NSMutableURLRequest* requestToPostWithURLStringAndDict(NSString *urlString, NSDi
 
 VDiskRet errCodeWithDict(NSDictionary *dict) {
 	DLog(@"json-dict:%@",dict);
-	DCAssert(dict!=nil,@"");
+	DCAssert(dict!=nil);
 	NSNumber *errCode = [dict objectForKey:kVDiskJsonLabelErrCode];
-	DCAssert(errCode!=nil,@"");
+	DCAssert(errCode!=nil);
 	
 	return [errCode intValue];
 }
 
 NSString* tokenWithDict(NSDictionary *dict) {
-	DCAssert(errCodeWithDict(dict)==0,@"");
+	DCAssert(errCodeWithDict(dict)==0);
 	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
-	DCAssert(data!=nil,@"");
+	DCAssert(data!=nil);
 	NSString *token = [data objectForKey:kVDiskJsonLabelToken];
-	DCAssert(token!=nil,@"");
+	DCAssert(token!=nil);
 	
 	return token;
 }
@@ -237,9 +237,9 @@ NSString* tokenWithDict(NSDictionary *dict) {
 #pragma mark keepToken
 
 NSInteger dologIDWithDict(NSDictionary *dict) {
-	DCAssert(dict!=nil,@"");
+	DCAssert(dict!=nil);
 	NSNumber *dologID = [dict objectForKey:kVDiskJsonLabelDologID];
-	DCAssert(dologID!=nil,@"");
+	DCAssert(dologID!=nil);
 	
 	return [dologID intValue];
 }
@@ -288,13 +288,13 @@ NSInteger dologIDWithDict(NSDictionary *dict) {
 #pragma mark getQuota
 
 VDiskQuota quotaWithDict(NSDictionary *dict) {
-	DCAssert(errCodeWithDict(dict)==0,@"");
+	DCAssert(errCodeWithDict(dict)==0);
 	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
-	DCAssert(data!=nil,@"");
+	DCAssert(data!=nil);
 	NSString *used = [data objectForKey:kVDiskJsonLabelUsed];
-	DCAssert(used!=nil,@"");
+	DCAssert(used!=nil);
 	NSString *total = [data objectForKey:kVDiskJsonLabelTotal];
-	DCAssert(total!=nil,@"");
+	DCAssert(total!=nil);
 	VDiskQuota quota = VDiskQuotaMake([used longLongValue], [total longLongValue]);
 	
 	return quota;
@@ -330,23 +330,23 @@ VDiskQuota quotaWithDict(NSDictionary *dict) {
 #pragma mark getFileList
 
 NSInteger pageTotalWithDict(NSDictionary *dict) {
-	DCAssert(errCodeWithDict(dict)==0,@"");
+	DCAssert(errCodeWithDict(dict)==0);
 	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
-	DCAssert(data!=nil,@"");
+	DCAssert(data!=nil);
 	NSDictionary *pageInfo = [data objectForKey:kVDiskJsonLabelPageInfo];
-	DCAssert(pageInfo!=nil,@"");
+	DCAssert(pageInfo!=nil);
 	NSNumber *pageTotal = [pageInfo objectForKey:kVDiskJsonLabelPageTotal];
-	DCAssert(pageTotal!=nil,@"");
+	DCAssert(pageTotal!=nil);
 	
 	return [pageTotal intValue];
 }
 
 void addFilesToListWithDict(NSMutableArray *fileList, NSDictionary *dict) {
-	DCAssert(errCodeWithDict(dict)==0,@"");
+	DCAssert(errCodeWithDict(dict)==0);
 	NSDictionary *data = [dict objectForKey:kVDiskJsonLabelData];
-	DCAssert(data!=nil,@"");
+	DCAssert(data!=nil);
 	NSArray *list = [data objectForKey:kVDiskJsonLabelList];
-	DCAssert(list!=nil,@"");
+	DCAssert(list!=nil);
 	for(NSDictionary *item in list){
 		VDiskItemInfo *itemInfo = [VDiskItemInfo itemInfoWithDict:item];
 		if([itemInfo isFile])
